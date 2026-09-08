@@ -117,7 +117,7 @@ st.markdown("""
         color: #FFFFFF !important;
         font-size: 18px !important;
         line-height: 1 !important;
-        margin-top: -18px !important;
+        margin: 0 !important;
         padding: 0 !important;
     }
     .custom-spinner {
@@ -141,17 +141,25 @@ st.markdown("""
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-size: 18px !important;
+        margin: 0 !important;
     }
 
     [data-testid="stChatMessageContainer"] {
         gap: 0.4rem !important;
     }
 
+    /* Tvinga vertikal centrering av allt innehåll inuti chattbubblorna */
+    [data-testid="stChatMessage"],
+    [data-testid="stChatMessage"] > div {
+        display: flex !important;
+        align-items: center !important;
+    }
+
     /* Användarens meddelanderuta: 0.05 opacitet */
     [data-testid="stChatMessage"] {
         background-color: rgba(255, 255, 255, 0.05) !important;
         border-radius: 16px !important;
-        padding: 24px 32px !important;
+        padding: 20px 28px !important;
         margin-bottom: 8px !important;
         animation: popInCenter 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
         transform-origin: center center !important;
@@ -160,14 +168,18 @@ st.markdown("""
     /* AI-meddelanderuta: 0.15 opacitet */
     [data-testid="stChatMessage"]:has(.ai-bubble-content) {
         background-color: rgba(255, 255, 255, 0.15) !important;
-        padding: 24px 32px !important;
+        padding: 20px 28px !important;
         margin-bottom: 8px !important;
     }
 
+    /* Vertikalt centrerad AI-text behållare */
     .ai-bubble-content {
         color: #FFFFFF !important;
         padding: 0 !important;
         margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
     }
 
     .stChatInputContainer,
