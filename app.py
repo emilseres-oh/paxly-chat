@@ -77,7 +77,7 @@ st.markdown(bg_css + """
         }
     }
 
-    /* Justering för att placera custom-loader i exakt samma höjd som ett vanligt p-element */
+    /* CSS för vertikalt centrerad vit spinner och text */
     .custom-loader {
         display: flex !important;
         align-items: center !important;
@@ -247,7 +247,6 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     bot_response = None
 
     with st.chat_message("assistant", avatar=AI_AVATAR):
-        # Skapa en tom ruta för laddningsanimationen
         loader_placeholder = st.empty()
         loader_placeholder.markdown('''
             <div class="custom-loader">
@@ -256,8 +255,19 @@ if prompt := st.chat_input("Skriv din fråga här..."):
             </div>
         ''', unsafe_allow_html=True)
 
-        # Försök först med gemini-3.6-flash upp till 2 gånger
-        for attempt in range(2):
+        # Förstahandsval: gemini-2.5-flash för snabb responstid
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config={"system_instruction": SYSTEM_INSTRUCTION}
+            )
+            bot_response = response.text
+        except Exception:
+            pass
+
+        # Reservmodell: gemini-3.6-flash om förstahandsvalet misslyckas
+        if not bot_response:
             try:
                 response = client.models.generate_content(
                     model="gemini-3.6-flash",
@@ -265,23 +275,9 @@ if prompt := st.chat_input("Skriv din fråga här..."):
                     config={"system_instruction": SYSTEM_INSTRUCTION}
                 )
                 bot_response = response.text
-                break
-            except Exception:
-                time.sleep(1)
-
-        # Om gemini-3.6-flash har 503/hög belastning, använd gemini-2.5-flash som reserv
-        if not bot_response:
-            try:
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=prompt,
-                    config={"system_instruction": SYSTEM_INSTRUCTION}
-                )
-                bot_response = response.text
             except Exception:
                 bot_response = "Det var som tusan Eva, nu spökar det i servrarna! Pröva igen om ett ögonblick."
 
-        # Ta bort laddningsanimationen och skriv ut det riktiga svaret
         loader_placeholder.empty()
         st.markdown(bot_response)
 
