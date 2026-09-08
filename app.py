@@ -107,19 +107,25 @@ st.markdown("""
         text-decoration: none !important;
     }
 
-    /* GLASUTSEENDE PÅ BOTTENPANELEN ISTÄLLET FÖR HELVIT */
-    .st-emotion-cache-6shykm,
-    [data-testid="stBottom"],
-    [data-testid="stBottom"] > div {
-        background-color: rgba(255, 255, 255, 0.12) !important;
+    /* FIXA DE DUBBLA LAGERNA NERTILL */
+    /* 1. Nollställ alla inre mellanlager till helt genomskinliga */
+    [data-testid="stBottom"] > div,
+    [data-testid="stBottom"] .stChatInputContainer,
+    .st-emotion-cache-6shykm {
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* 2. Applicera glaseffekten BARA på den yttersta huvudcontainern */
+    [data-testid="stBottom"] {
+        background-color: rgba(255, 255, 255, 0.08) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
         border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
         padding-top: 1rem !important;
         padding-bottom: 1rem !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
     }
 
     /* Animationer */
