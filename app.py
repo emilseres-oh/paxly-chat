@@ -46,8 +46,13 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
+    /* Lås sidskrollningens startposition för att förhindra hopp vid sidbyte */
+    html {
+        scroll-behavior: auto !important;
+    }
+
     .stMainBlockContainer {
-        padding-top: 5rem !important;
+        padding-top: 5.5rem !important;
     }
 
     /* Fixerad Navbar LÄNGST UPPI MITTEN */
@@ -75,40 +80,28 @@ st.markdown("""
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* Dölj enbart själva cirkeln/radiopunkten */
-    [data-testid="stRadio"] label [data-testid="stMarkdownContainer"] ~ div,
-    [data-testid="stRadio"] label > div:first-child,
-    [data-testid="stRadio"] label input[type="radio"] {
-        position: absolute !important;
-        opacity: 0 !important;
-        width: 0 !important;
-        height: 0 !important;
-        pointer-events: none !important;
+    /* DÖLJ CIRKELN/PUNKTEN HELT PÅ ETT SÄKERT SÄTT */
+    [data-testid="stRadio"] label > div:first-child {
+        display: none !important;
     }
 
-    /* Tvinga knapparna att visas som kapslar */
+    /* Kapselformade renodlade knappar */
     [data-testid="stRadio"] label {
         padding: 8px 24px !important;
         border-radius: 30px !important;
         cursor: pointer !important;
-        transition: all 0.25s ease-in-out !important;
+        transition: background-color 0.2s ease !important;
         margin: 0 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        position: relative !important;
     }
 
-    /* Tvinga texten att alltid vara synlig och vit */
-    [data-testid="stRadio"] label p,
-    [data-testid="stRadio"] label span {
+    [data-testid="stRadio"] label p {
         color: rgba(255, 255, 255, 0.8) !important;
         font-size: 15px !important;
         font-weight: 500 !important;
         margin: 0 !important;
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
     }
 
     /* Aktiv flik */
@@ -117,8 +110,7 @@ st.markdown("""
         box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5) !important;
     }
 
-    [data-testid="stRadio"] label:has(input:checked) p,
-    [data-testid="stRadio"] label:has(input:checked) span {
+    [data-testid="stRadio"] label:has(input:checked) p {
         color: #FFFFFF !important;
         font-weight: 600 !important;
     }
@@ -403,10 +395,10 @@ if selected_page == "Chatt":
                 else:
                     bot_response = f"Det var som tusan Eva, nu spökar det i servrarna! (Fel: {e})"
 
-        loader_placeholder.empty()
-        st.markdown(bot_response)
+            loader_placeholder.empty()
+            st.markdown(bot_response)
 
-    st.session_state.messages.append({"role": "assistant", "content": bot_response})
+        st.session_state.messages.append({"role": "assistant", "content": bot_response})
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
@@ -430,7 +422,11 @@ elif selected_page == "Onboarding":
     ''', unsafe_allow_html=True)
 
     if os.path.exists("logo.png"):
-        st.image("logo.png", caption="Paxly Resource Engine", use_container_width=True)
+        st.markdown('''
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="data:image/png;base64,{}" style="max-width: 100%; border-radius: 12px;" alt="Resource Engine">
+            </div>
+        '''.format(get_base64_image("logo.png")), unsafe_allow_html=True)
 
     st.markdown('''
         <div class="onboarding-card">
@@ -445,7 +441,11 @@ elif selected_page == "Onboarding":
     ''', unsafe_allow_html=True)
 
     if os.path.exists("bg.jpg"):
-        st.image("bg.jpg", caption="Paxly Bokningsvy", use_container_width=True)
+        st.markdown('''
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="data:image/jpeg;base64,{}" style="max-width: 100%; border-radius: 12px;" alt="Bokningsvy">
+            </div>
+        '''.format(get_base64_image("bg.jpg")), unsafe_allow_html=True)
 
     st.markdown('''
         <div class="onboarding-card">
