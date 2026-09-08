@@ -5,7 +5,7 @@ from google import genai
 
 st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
-# Funktion för att läsa in en bild och göra om den till base64 för CSS
+# Funktion för att läsa in bilden och konvertera till Base64
 def get_base64_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
@@ -14,7 +14,7 @@ def get_base64_image(image_path):
 
 bg_base64 = get_base64_image("bg.jpg")
 
-# Skapa CSS med bakgrundsbild och 80 % färgöverlägg (#080D42 med 80% opacitet -> rgba(8, 13, 66, 0.8))
+# CSS för bakgrund, logga, meddelanderutor och inputfält
 if bg_base64:
     bg_css = f"""
     <style>
@@ -37,25 +37,59 @@ else:
     }
     """
 
-# Kompletterande stil för chattbubblor och gränssnitt
 st.markdown(bg_css + """
+    /* Dölj gränssnittselement */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-    
+
+    /* Avstånd under loggan och ställ storlek (80 % av 250px = 200px) */
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 60px;
+        margin-top: 20px;
+    }
+    .logo-container img {
+        max-width: 200px !important;
+        height: auto;
+    }
+
+    /* Meddelanderutor: Vita med opacitet (rgba 15 %), svarta/mörka texter för god läsbarhet & border-radius 99999px */
     .stChatMessage {
-        background-color: rgba(18, 25, 94, 0.85) !important;
-        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        border-radius: 99999px !important;
+        padding: 12px 24px !important;
+        margin-bottom: 15px !important;
         color: #FFFFFF !important;
+    }
+
+    /* Input-fält: border-radius 99999px, svart text och aktiv border (#AD87FC, 2px) */
+    .stChatInputContainer {
+        border-radius: 99999px !important;
+    }
+    
+    .stChatInputContainer textarea {
+        color: #000000 !important;
+        border-radius: 99999px !important;
+        background-color: #FFFFFF !important;
+    }
+    
+    /* När input-fältet är aktivt/fokuserat */
+    .stChatInputContainer:focus-within {
+        border: 2px solid #AD87FC !important;
+        box-shadow: 0 0 8px rgba(173, 135, 252, 0.5) !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Visa centrerad logotyp
+# Visa logotypen centrerad med större marginal nedåt
 if os.path.exists("logo.png"):
+    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.image("logo.png", use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 api_key = os.environ.get("GEMINI_API_KEY")
 
@@ -94,8 +128,9 @@ if prompt := st.chat_input("Skriv din fråga här..."):
         st.markdown(prompt)
 
     try:
+        # Ändrat till gemini-2.5-flash för att åtgärda API-felet
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash",
             contents=prompt,
             config={"system_instruction": SYSTEM_INSTRUCTION}
         )
