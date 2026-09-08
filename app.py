@@ -42,6 +42,12 @@ st.markdown(bg_css + """
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
+    /* Justera bottenavstånd till 1rem */
+    .st-emotion-cache-6shykm,
+    [data-testid="stBottom"] {
+        padding-bottom: 1rem !important;
+    }
+
     /* Logotypens storlek (max 300px) och avstånd nedåt */
     .logo-container {
         display: flex;
@@ -82,14 +88,13 @@ st.markdown(bg_css + """
         box-shadow: none !important;
     }
 
-    /* Inre behållaren rensas från egen border för att undvika dubbelram */
+    /* Inre behållaren rensas från egen border och padding har tagits bort */
     .stChatInputContainer,
     .stChatInputContainer > div,
     [data-testid="stChatInput"] > div {
         border: none !important;
         border-radius: 24px !important;
         background-color: transparent !important;
-        padding: 4px 8px !important;
         box-shadow: none !important;
     }
 
@@ -119,7 +124,7 @@ st.markdown(bg_css + """
         line-height: 48px !important;
     }
 
-    /* Snygg lila glow vid klick/fokus */
+    /* Lila glow vid klick/fokus */
     [data-testid="stChatInput"]:focus-within {
         border: 2px solid #9C6EF9 !important;
         box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
