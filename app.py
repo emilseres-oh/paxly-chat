@@ -74,14 +74,22 @@ st.markdown(bg_css + """
         margin-bottom: 6px !important;
     }
 
-    /* Ta bort den röda ramen helt från alla inre behållare */
-    [data-testid="stChatInput"],
-    [data-testid="stChatInput"] > div,
-    .stChatInputContainer,
-    .stChatInputContainer > div {
-        border: 1px solid #9C6EF9 !important;
+    /* Yttre behållare får den lila ramen */
+    [data-testid="stChatInput"] {
+        border: 1.5px solid #9C6EF9 !important;
         border-radius: 24px !important;
         background-color: #FFFFFF !important;
+        box-shadow: none !important;
+    }
+
+    /* Inre behållaren rensas från egen border för att undvika dubbelram */
+    .stChatInputContainer,
+    .stChatInputContainer > div,
+    [data-testid="stChatInput"] > div {
+        border: none !important;
+        border-radius: 24px !important;
+        background-color: transparent !important;
+        padding: 4px 8px !important;
         box-shadow: none !important;
     }
 
@@ -111,15 +119,13 @@ st.markdown(bg_css + """
         line-height: 48px !important;
     }
 
-    /* Aktiv ram vid fokus (bort med rött, in med lila glow) */
-    [data-testid="stChatInput"]:focus-within,
-    [data-testid="stChatInput"] > div:focus-within,
-    .stChatInputContainer:focus-within {
+    /* Snygg lila glow vid klick/fokus */
+    [data-testid="stChatInput"]:focus-within {
         border: 2px solid #9C6EF9 !important;
-        box-shadow: 0 0 8px rgba(156, 110, 249, 0.6) !important;
+        box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
     }
 
-    /* Skickaknappen i lila */
+    /* Skickaknappen */
     [data-testid="stChatInputSubmitButton"] button,
     [data-testid="stChatInput"] button {
         background-color: #9C6EF9 !important;
