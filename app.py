@@ -244,21 +244,21 @@ if prompt := st.chat_input("Skriv din fråga här..."):
             </div>
         ''', unsafe_allow_html=True)
 
-        errors = []
-        for model_name in ["gemini-3.6-flash", "gemini-2.5-flash"]:
-            try:
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=prompt,
-                    config={"system_instruction": SYSTEM_INSTRUCTION}
-                )
-                bot_response = response.text
-                break
-            except Exception as e:
-                errors.append(f"{model_name}: {str(e)}")
-
-        if not bot_response:
-            bot_response = "Kunde inte ansluta till någon modell. Detaljer: " + " | ".join(errors)
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.6-flash",
+                contents=prompt,
+                config={"system_instruction": SYSTEM_INSTRUCTION}
+            )
+            bot_response = response.text
+        except Exception as e:
+            err_msg = str(e)
+            if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
+                bot_response = "Tror du att jag jobbar dygnet runt gratis eller, Eva!? Dagsgränsen för gratiskvoten har nåtts! Prova igen om en stund eller imorgon."
+            elif "503" in err_msg or "UNAVAILABLE" in err_msg:
+                bot_response = "Nu är trycket hårt på servrarna Eva! Prova att ställa din fråga igen om ett ögonblick."
+            else:
+                bot_response = f"Det var som tusan Eva, nu spökar det i servrarna! (Fel: {e})"
 
         loader_placeholder.empty()
         st.markdown(bot_response)
