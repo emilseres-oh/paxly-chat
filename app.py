@@ -6,56 +6,7 @@ from google import genai
 
 st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
-def get_base64_image(image_path):
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    return None
-
-bg_base64 = get_base64_image("bg.jpg")
-
-# Sätt bakgrundsfärgen på HTML/Body-nivå omedelbart så att sidan aldrig blir vit vid laddning
-st.markdown("""
-    <style>
-    /* Lås bakgrunden omedelbart på rot-nivå */
-    html, body, [data-testid="stAppViewContainer"], .stApp {
-        background-color: #080d42 !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-if bg_base64:
-    bg_css = f"""
-    <style>
-    .stApp {{
-        background: linear-gradient(rgba(8, 13, 66, 0.8), rgba(8, 13, 66, 0.8)), 
-                    url("data:image/jpeg;base64,{bg_base64}") !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-        background-attachment: fixed !important;
-        color: #FFFFFF;
-    }}
-    </style>
-    """
-else:
-    bg_css = """
-    <style>
-    .stApp {
-        background-color: rgba(8, 13, 66, 0.8) !important;
-        color: #FFFFFF;
-    }
-    </style>
-    """
-
-st.markdown(bg_css, unsafe_allow_html=True)
-
-# Tvinga Safari adressfält/flikrad att matcha mörkblå bakgrunden
-st.markdown("""
-    <meta name="theme-color" content="#080d42">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-""", unsafe_allow_html=True)
-
+# LÄGG CSS HÖGST UPP SÅ ATT SIDAN RITARS UT RÄTT DIREKT
 st.markdown("""
     <!-- IMPORT GOOGLE FONT: QUICKSAND -->
     <style>
@@ -70,16 +21,18 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Förhindra automatiska skrollhopp vid sidbyte */
+    /* Stoppa skrollhopp vid sidbyte */
     html, body, .stAppContainer, .stApp {
         scroll-behavior: auto !important;
+        overflow-y: scroll !important;
     }
 
     .stMainBlockContainer {
         padding-top: 5.5rem !important;
+        padding-bottom: 7rem !important;
     }
 
-    /* RENSAD & STABIL NAVBAR */
+    /* RENSAD & FIXERAD NAVBAR */
     .paxly-navbar-container {
         position: fixed;
         top: 20px;
@@ -95,6 +48,8 @@ st.markdown("""
         border-radius: 40px;
         border: 1px solid rgba(255, 255, 255, 0.2);
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        height: 48px;
+        box-sizing: border-box;
     }
 
     /* ALLTID VIT TEXT OCH INGEN UNDERLINE */
@@ -114,8 +69,9 @@ st.markdown("""
         font-family: 'Quicksand', sans-serif !important;
         cursor: pointer;
         text-decoration: none !important;
-        transition: all 0.2s ease;
+        transition: background-color 0.15s ease;
         display: inline-block;
+        line-height: 1;
     }
 
     /* AKTIV FLIK */
@@ -132,7 +88,46 @@ st.markdown("""
         text-decoration: none !important;
     }
 
-    /* FIXA BOTTENPANELEN & VERTIKAL CENTRERING AV INPUTFÄLTET */
+    /* ANIMATIONER */
+    @keyframes popScale {
+        0% { transform: scale(0.85); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes popInCenter {
+        0% { transform: scale(0.85); opacity: 0; }
+        60% { transform: scale(1.02); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* LOGOTYP-CONTAINER MED ANIMATION */
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 90px;
+        margin-bottom: 25px !important;
+        margin-top: 10px;
+        animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+    .logo-container img {
+        width: 300px !important;
+        max-width: 80% !important;
+        height: auto !important;
+    }
+
+    @media (max-width: 768px) {
+        .logo-container {
+            height: 60px;
+        }
+        .logo-container img {
+            width: 200px !important;
+            max-width: 70% !important;
+        }
+    }
+
+    /* BOTTENPANEL */
     [data-testid="stBottom"] > div,
     [data-testid="stBottom"] .stChatInputContainer,
     .st-emotion-cache-6shykm {
@@ -159,24 +154,7 @@ st.markdown("""
         justify-content: center !important;
     }
 
-    /* Animationer */
-    @keyframes slideUpInput {
-        0% { transform: translateY(40px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes popScale {
-        0% { transform: scale(0.85); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes popInCenter {
-        0% { transform: scale(0.85); opacity: 0; }
-        60% { transform: scale(1.02); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    /* EXAKT ORIGINALEXEMPLAR FÖR CHATINPUT & LOGOTYP */
+    /* CHATINPUT */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
         border-radius: 24px !important;
@@ -186,29 +164,6 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         margin: 0 !important;
-        animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-    }
-
-    .logo-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        margin-bottom: 25px !important;
-        margin-top: 10px;
-        animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-    }
-    .logo-container img {
-        width: 300px !important;
-        max-width: 80% !important;
-        height: auto !important;
-    }
-
-    @media (max-width: 768px) {
-        .logo-container img {
-            width: 200px !important;
-            max-width: 70% !important;
-        }
     }
 
     /* Loader */
@@ -251,8 +206,7 @@ st.markdown("""
         gap: 0.4rem !important;
     }
 
-    /* GLAS-KÄNSLA PÅ CHATTMEDDELANDEN */
-    /* Användarens meddelanden */
+    /* GLAS-KÄNSLA PÅ CHATTMEDDELANDEN MED ANIMATION */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.08) !important;
         backdrop-filter: blur(12px) !important;
@@ -266,14 +220,13 @@ st.markdown("""
         transform-origin: center center !important;
     }
 
-    /* AI-assistentens meddelanden (något tydligare glas/ljusstyrka) */
     [data-testid="stChatMessageContainer"] > div:nth-child(even) .stChatMessage {
         background-color: rgba(255, 255, 255, 0.14) !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
     }
 
-    /* Onboarding-kort (1-kolumn) */
+    /* Onboarding-kort */
     .onboarding-card {
         background-color: rgba(255, 255, 255, 0.1) !important;
         backdrop-filter: blur(12px) !important;
@@ -304,7 +257,7 @@ st.markdown("""
         color: #E0E0E0 !important;
     }
 
-    /* EXAKT ORIGINALEXEMPLAR FÖR TEXTAREA & CHATINPUT */
+    /* EXAKT FÖR TEXTAREA & CHATINPUT */
     .stChatInputContainer,
     .stChatInputContainer > div,
     [data-testid="stChatInput"] > div {
@@ -368,6 +321,46 @@ st.markdown("""
         color: #FFFFFF !important;
     }
     </style>
+""", unsafe_allow_html=True)
+
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return None
+
+bg_base64 = get_base64_image("bg.jpg")
+
+if bg_base64:
+    bg_css = f"""
+    <style>
+    .stApp {{
+        background: linear-gradient(rgba(8, 13, 66, 0.8), rgba(8, 13, 66, 0.8)), 
+                    url("data:image/jpeg;base64,{bg_base64}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color: #FFFFFF;
+    }}
+    </style>
+    """
+else:
+    bg_css = """
+    <style>
+    .stApp {
+        background-color: rgba(8, 13, 66, 0.8);
+        color: #FFFFFF;
+    }
+    </style>
+    """
+
+st.markdown(bg_css, unsafe_allow_html=True)
+
+# Safari adressfält/flikrad färg
+st.markdown("""
+    <meta name="theme-color" content="#080d42">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 """, unsafe_allow_html=True)
 
 # Läs URL-parametrar för navigeringen
