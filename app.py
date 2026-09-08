@@ -107,8 +107,7 @@ st.markdown("""
         text-decoration: none !important;
     }
 
-    /* FIXA DE DUBBLA LAGERNA NERTILL */
-    /* 1. Nollställ alla inre mellanlager till helt genomskinliga */
+    /* FIXA BOTTENPANELEN & VERTIKAL CENTRERING AV INPUTFÄLTET */
     [data-testid="stBottom"] > div,
     [data-testid="stBottom"] .stChatInputContainer,
     .st-emotion-cache-6shykm {
@@ -116,16 +115,23 @@ st.markdown("""
         background-color: transparent !important;
         border: none !important;
         box-shadow: none !important;
+        margin: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        display: flex !important;
+        align-items: center !important;
     }
 
-    /* 2. Applicera glaseffekten BARA på den yttersta huvudcontainern */
     [data-testid="stBottom"] {
         background-color: rgba(255, 255, 255, 0.08) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
         border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 1.2rem !important;
+        padding-bottom: 1.2rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     /* Animationer */
@@ -154,6 +160,7 @@ st.markdown("""
         box-sizing: border-box !important;
         display: flex !important;
         align-items: center !important;
+        margin: 0 !important;
         animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
 
@@ -217,9 +224,14 @@ st.markdown("""
         gap: 0.4rem !important;
     }
 
-    /* Användarens meddelanden = 0.05 opacitet */
+    /* GLAS-KÄNSLA PÅ CHATTMEDDELANDEN */
+    /* Användarens meddelanden */
     .stChatMessage {
-        background-color: rgba(255, 255, 255, 0.05) !important;
+        background-color: rgba(255, 255, 255, 0.08) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
@@ -227,14 +239,18 @@ st.markdown("""
         transform-origin: center center !important;
     }
 
-    /* AI-assistentens meddelanden = 0.15 opacitet */
+    /* AI-assistentens meddelanden (något tydligare glas/ljusstyrka) */
     [data-testid="stChatMessageContainer"] > div:nth-child(even) .stChatMessage {
-        background-color: rgba(255, 255, 255, 0.15) !important;
+        background-color: rgba(255, 255, 255, 0.14) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
     }
 
     /* Onboarding-kort (1-kolumn) */
     .onboarding-card {
         background-color: rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
         border-radius: 20px !important;
         padding: 28px !important;
         margin-bottom: 20px !important;
