@@ -5,7 +5,7 @@ from google import genai
 
 st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
-# Läs in bakgrundsbild
+# Läs in bild och konvertera till base64
 def get_base64_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
@@ -54,7 +54,7 @@ st.markdown(bg_css + """
         justify-content: center !important;
     }
 
-    /* Centrerad logotyp med strikt maxbredd för mobil och desktop */
+    /* Centrerad logotyp - 300px på desktop, skalar ner automatiskt på mobil */
     .logo-container {
         display: flex;
         justify-content: center;
@@ -64,9 +64,16 @@ st.markdown(bg_css + """
         margin-top: 10px;
     }
     .logo-container img {
-        width: 200px !important;
-        max-width: 70% !important;
+        width: 300px !important;
+        max-width: 80% !important;
         height: auto !important;
+    }
+
+    @media (max-width: 768px) {
+        .logo-container img {
+            width: 200px !important;
+            max-width: 70% !important;
+        }
     }
 
     /* Vit text samt 18px teckenstorlek i chatten */
@@ -167,13 +174,13 @@ st.markdown(bg_css + """
     </style>
 """, unsafe_allow_html=True)
 
-# Visa logotypen direkt utan Streamlits responsive columns
+# Visa logotypen direkt
 if os.path.exists("logo.png"):
     st.markdown('''
         <div class="logo-container">
             <img src="data:image/png;base64,{}" alt="Paxly Logo">
         </div>
-    '''.format(base64.b64encode(open("logo.png", "rb").read()).decode()), unsafe_allow_html=True)
+    '''.format(get_base64_image("logo.png")), unsafe_allow_html=True)
 
 api_key = os.environ.get("GEMINI_API_KEY")
 
@@ -198,17 +205,24 @@ Information om Paxly:
 Om användaren frågar om något som inte täcks i informationen ovan, svara vänligt att du tyvärr inte har svaret på det än och hänvisa till support@paxly.se.
 """
 
+# Konvertera bildikoner till Data URI för garanterad visning
+human_b64 = get_base64_image("human.png")
+ai_b64 = get_base64_image("ai.png")
+
+USER_AVATAR = f"data:image/png;base64,{human_b64}" if human_b64 else "👤"
+AI_AVATAR = f"data:image/png;base64,{ai_b64}" if ai_b64 else "🤖"
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 for message in st.session_state.messages:
-    avatar = "👤" if message["role"] == "user" else "🤖"
+    avatar = USER_AVATAR if message["role"] == "user" else AI_AVATAR
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
 
 if prompt := st.chat_input("Skriv din fråga här..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar="👤"):
+    with st.chat_message("user", avatar=USER_AVATAR):
         st.markdown(prompt)
 
     try:
@@ -221,6 +235,6 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     except Exception as e:
         bot_response = f"Ett fel uppstod vid kontakt med AI-tjänsten: {e}"
 
-    with st.chat_message("assistant", avatar="🤖"):
+    with st.chat_message("assistant", avatar=AI_AVATAR):
         st.markdown(bot_response)
     st.session_state.messages.append({"role": "assistant", "content": bot_response})
