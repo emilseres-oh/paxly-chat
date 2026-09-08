@@ -42,9 +42,11 @@ st.markdown(bg_css + """
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Justera bottenavstånd till 1rem */
+    /* Vit bakgrund på hela bottensektionen för att täppa till 'hålet' */
     .st-emotion-cache-6shykm,
-    [data-testid="stBottom"] {
+    [data-testid="stBottom"],
+    [data-testid="stBottom"] > div {
+        background-color: #FFFFFF !important;
         padding-bottom: 1rem !important;
     }
 
@@ -60,7 +62,7 @@ st.markdown(bg_css + """
         height: auto;
     }
 
-    /* Vit text samt 18px teckenstorlek */
+    /* Vit text samt 18px teckenstorlek i chatten */
     p, .stChatMessage p {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
@@ -80,15 +82,16 @@ st.markdown(bg_css + """
         margin-bottom: 6px !important;
     }
 
-    /* Yttre behållare får den lila ramen */
+    /* Yttre behållare - alltid 2px border för att förhindra höjdförändring vid fokus */
     [data-testid="stChatInput"] {
-        border: 1.5px solid #9C6EF9 !important;
+        border: 2px solid #9C6EF9 !important;
         border-radius: 24px !important;
         background-color: #FFFFFF !important;
         box-shadow: none !important;
+        box-sizing: border-box !important;
     }
 
-    /* Inre behållaren rensas från egen border och padding har tagits bort */
+    /* Inre behållare rensad från border */
     .stChatInputContainer,
     .stChatInputContainer > div,
     [data-testid="stChatInput"] > div {
@@ -124,7 +127,7 @@ st.markdown(bg_css + """
         line-height: 48px !important;
     }
 
-    /* Lila glow vid klick/fokus */
+    /* Lägger på skugga vid klick UTAN att ändra storlek eller tjocklek på ramen */
     [data-testid="stChatInput"]:focus-within {
         border: 2px solid #9C6EF9 !important;
         box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
