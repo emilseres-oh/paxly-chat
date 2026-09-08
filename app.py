@@ -75,20 +75,22 @@ st.markdown("""
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* Strikt borttagning av alla radio-prickar och cirklar */
-    [data-testid="stRadio"] label > div:first-child,
-    [data-testid="stRadio"] input[type="radio"],
-    [data-testid="stRadio"] [data-baseweb="radio"] > div:first-child,
-    [data-testid="stRadio"] label span:first-child {
+    /* Tvinga bort radio-pricken/cirkeln fullständigt */
+    [data-testid="stRadio"] label > div,
+    [data-testid="stRadio"] label svg,
+    [data-testid="stRadio"] label input,
+    [data-testid="stRadio"] label ::before,
+    [data-testid="stRadio"] label ::after {
         display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
         width: 0 !important;
         height: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
-        visibility: hidden !important;
     }
 
-    /* Styling för klickbara renodlade knappar utan prickar */
+    /* Styling för de rena knapparna */
     [data-testid="stRadio"] label {
         padding: 8px 24px !important;
         border-radius: 30px !important;
@@ -446,6 +448,6 @@ elif selected_page == "Onboarding":
         <div class="onboarding-card">
             <h3>📖 Fullständig Användardokumentation</h3>
             <p>För mer ingående instruktioner, vanliga frågor och detaljerade guider om samtliga funktioner i Paxly, se vår fullständiga dokumentation:</p>
-            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a>[span_0](start_span)[span_0](end_span)</p>
+            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a>[span_1](start_span)[span_1](end_span)</p>
         </div>
     ''', unsafe_allow_html=True)
