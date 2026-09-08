@@ -82,23 +82,23 @@ st.markdown("""
         }
     }
 
-    /* Bubblig pop-in-animation för meddelanden med lätt studseffekt */
-    @keyframes popInBubble {
+    /* Bubblig pop-in-animation från mitten */
+    @keyframes popInCenter {
         0% {
-            transform: scale(0.92) translateY(10px);
+            transform: scale(0.85);
             opacity: 0;
         }
-        70% {
-            transform: scale(1.02) translateY(-2px);
+        60% {
+            transform: scale(1.03);
             opacity: 1;
         }
         100% {
-            transform: scale(1) translateY(0);
+            transform: scale(1);
             opacity: 1;
         }
     }
 
-    /* Animera enbart själva det vita fältet/inputboxen */
+    /* Animera enbart själva det vita fältet/inputboxen vid laddning */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
         border-radius: 24px !important;
@@ -169,14 +169,26 @@ st.markdown("""
         gap: 0.4rem !important;
     }
 
-    /* Meddelanderutor med den nya bubbliga pop-in-effekten */
+    /* Grundinställning för meddelanderutor (Användarens: 15% opacitet) */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
-        animation: popInBubble 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
-        transform-origin: bottom left;
+    }
+
+    /* AI-meddelanderutan: 10% mindre opacitet (5% opacitet / rgba 0.05) */
+    .stChatMessage:has([aria-label="Chatbot avatar"]),
+    .stChatMessage:has(img[alt="🤖"]),
+    [data-testid="stChatMessageContainer"] > div:nth-child(even) .stChatMessage {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    /* Applicera ENBART bubbel-animationen på det SENASTE meddelandet */
+    [data-testid="stChatMessageContainer"] > div:last-child .stChatMessage {
+        animation: popInCenter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+        transform-origin: center center !important;
+        will-change: transform, opacity;
     }
 
     .stChatInputContainer,
