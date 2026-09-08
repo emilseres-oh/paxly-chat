@@ -46,7 +46,7 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Vit bakgrund på bottenkontrollern utan isolerad animation */
+    /* Vit bakgrund på bottenkontrollern */
     .st-emotion-cache-6shykm,
     [data-testid="stBottom"],
     [data-testid="stBottom"] > div {
@@ -58,7 +58,7 @@ st.markdown("""
         justify-content: center !important;
     }
 
-    /* Keyframes för mjuk slide-in av enbart inputfältet nedifrån */
+    /* Keyframes för mjuk slide-in av inmatningsfältet nedifrån */
     @keyframes slideUpInput {
         0% {
             transform: translateY(40px);
@@ -66,6 +66,18 @@ st.markdown("""
         }
         100% {
             transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Keyframes för mjuk scaling/zoom av logotypen vid laddning */
+    @keyframes popScale {
+        0% {
+            transform: scale(0.85);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
             opacity: 1;
         }
     }
@@ -82,6 +94,7 @@ st.markdown("""
         animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
 
+    /* Logotype-behållare med mjuk in-skalning */
     .logo-container {
         display: flex;
         justify-content: center;
@@ -89,6 +102,7 @@ st.markdown("""
         width: 100%;
         margin-bottom: 40px !important;
         margin-top: 10px;
+        animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
     .logo-container img {
         width: 300px !important;
