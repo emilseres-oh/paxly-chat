@@ -58,47 +58,24 @@ st.markdown("""
         justify-content: center !important;
     }
 
-    /* Keyframes för mjuk slide-in av inmatningsfältet nedifrån */
+    /* Animationer */
     @keyframes slideUpInput {
-        0% {
-            transform: translateY(40px);
-            opacity: 0;
-        }
-        100% {
-            transform: translateY(0);
-            opacity: 1;
-        }
+        0% { transform: translateY(40px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
     }
 
-    /* Keyframes för mjuk scaling/zoom av logotypen vid laddning */
     @keyframes popScale {
-        0% {
-            transform: scale(0.85);
-            opacity: 0;
-        }
-        100% {
-            transform: scale(1);
-            opacity: 1;
-        }
+        0% { transform: scale(0.85); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
     }
 
-    /* Bubblig pop-in animation från mitten */
     @keyframes popInCenter {
-        0% {
-            transform: scale(0.85);
-            opacity: 0;
-        }
-        60% {
-            transform: scale(1.02);
-            opacity: 1;
-        }
-        100% {
-            transform: scale(1);
-            opacity: 1;
-        }
+        0% { transform: scale(0.85); opacity: 0; }
+        60% { transform: scale(1.02); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
     }
 
-    /* Animera enbart själva det vita fältet/inputboxen vid laddning */
+    /* Inputbox & Logotyp */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
         border-radius: 24px !important;
@@ -110,7 +87,6 @@ st.markdown("""
         animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
 
-    /* Logotype-behållare med mjuk in-skalning */
     .logo-container {
         display: flex;
         justify-content: center;
@@ -133,6 +109,7 @@ st.markdown("""
         }
     }
 
+    /* Loader */
     .custom-loader {
         display: flex !important;
         align-items: center !important;
@@ -169,7 +146,7 @@ st.markdown("""
         gap: 0.4rem !important;
     }
 
-    /* Standardinställning för alla meddelanderutor (Användarens = 0.15 / 15%) */
+    /* Grundinställning för användarens meddelanderuta (15% opacitet) */
     [data-testid="stChatMessage"] {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
@@ -179,10 +156,8 @@ st.markdown("""
         transform-origin: center center !important;
     }
 
-    /* AI-assistentens meddelanderuta: Strikt sänkt opacitet till 0.05 (5%) */
-    [data-testid="stChatMessage"]:has(img[src*="data:image"]),
-    [data-testid="stChatMessageContainer"] > div[data-testid="stChatMessage"]:nth-of-type(even),
-    .stChatMessage[data-test-async="true"] {
+    /* Tvinga AI-meddelanden att få lägre opacitet (5% opacitet) via föräldraelementet */
+    [data-testid="stChatMessage"]:has(.ai-bubble-content) {
         background-color: rgba(255, 255, 255, 0.05) !important;
     }
 
@@ -278,10 +253,14 @@ AI_AVATAR = f"data:image/png;base64,{ai_b64}" if ai_b64 else "🤖"
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Rendera historiken med unik wrapper på AI-svar
 for message in st.session_state.messages:
     avatar = USER_AVATAR if message["role"] == "user" else AI_AVATAR
     with st.chat_message(message["role"], avatar=avatar):
-        st.markdown(message["content"])
+        if message["role"] == "assistant":
+            st.markdown(f'<div class="ai-bubble-content">{message["content"]}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(message["content"])
 
 if prompt := st.chat_input("Skriv din fråga här..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -293,7 +272,7 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     with st.chat_message("assistant", avatar=AI_AVATAR):
         loader_placeholder = st.empty()
         loader_placeholder.markdown('''
-            <div class="custom-loader">
+            <div class="ai-bubble-content custom-loader">
                 <div class="custom-spinner"></div>
                 <span>Hämtar information...</span>
             </div>
@@ -316,6 +295,6 @@ if prompt := st.chat_input("Skriv din fråga här..."):
                 bot_response = f"Det var som tusan Eva, nu spökar det i servrarna! (Fel: {e})"
 
         loader_placeholder.empty()
-        st.markdown(bot_response)
+        st.markdown(f'<div class="ai-bubble-content">{bot_response}</div>', unsafe_allow_html=True)
 
     st.session_state.messages.append({"role": "assistant", "content": bot_response})
