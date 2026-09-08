@@ -66,7 +66,7 @@ st.markdown(bg_css + """
         gap: 0.4rem !important;
     }
 
-    /* Meddelanderutor med border-radius 16px */
+    /* Meddelanderutor */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
@@ -74,15 +74,15 @@ st.markdown(bg_css + """
         margin-bottom: 6px !important;
     }
 
-    /* Input-fältets behållare */
-    .stChatInputContainer {
+    /* Input-fältets behållare & ram */
+    [data-testid="stChatInput"], .stChatInputContainer {
         border-radius: 24px !important;
+        border: 1px solid #9C6EF9 !important;
         background-color: #FFFFFF !important;
         padding: 6px 12px !important;
-        border: 1px solid #9C6EF9 !important;
     }
 
-    /* Svart text, vertikalt centrerad och större höjd */
+    /* Svart text, vertikalt centrerad */
     .stChatInputContainer textarea,
     .stChatInputContainer p,
     .stChatInputContainer span,
@@ -99,7 +99,7 @@ st.markdown(bg_css + """
         padding-bottom: 0px !important;
     }
 
-    /* Placeholder-text vertikalt centrerad */
+    /* Placeholder-text */
     .stChatInputContainer textarea::placeholder {
         color: #666666 !important;
         -webkit-text-fill-color: #666666 !important;
@@ -107,13 +107,17 @@ st.markdown(bg_css + """
         line-height: 48px !important;
     }
 
-    /* Ersätt alla Streamlit-standardfärgade röd/rosa element (#ff4b4b) med #9C6EF9 */
-    .stChatInputContainer:focus-within {
-        border: 2px solid #9C6EF9 !important;
-        box-shadow: 0 0 8px rgba(156, 110, 249, 0.5) !important;
+    /* Tvinga bort röd ram vid klick/fokus */
+    .stChatInputContainer:focus-within,
+    [data-testid="stChatInput"]:focus-within,
+    .stChatInputContainer:focus,
+    textarea:focus {
+        border-color: #9C6EF9 !important;
+        outline: none !important;
+        box-shadow: 0 0 8px rgba(156, 110, 249, 0.6) !important;
     }
 
-    /* Skicka-knappen i inputfältet */
+    /* Skickaknappen i inputfältet */
     [data-testid="stChatInputSubmitButton"] button {
         background-color: #9C6EF9 !important;
         color: #FFFFFF !important;
@@ -122,7 +126,6 @@ st.markdown(bg_css + """
     
     [data-testid="stChatInputSubmitButton"] button:hover {
         background-color: #8552f8 !important;
-        color: #FFFFFF !important;
     }
 
     [data-testid="stChatInputSubmitButton"] svg {
