@@ -77,19 +77,17 @@ st.markdown(bg_css + """
         }
     }
 
-    /* Gör spinnern (snurrande cirkeln och texten) vit */
+    /* Gör Hela spinner-komponenten helt vit */
     [data-testid="stSpinner"],
-    [data-testid="stSpinner"] > div,
-    [data-testid="stSpinner"] p,
-    .stSpinner p {
+    [data-testid="stSpinner"] * {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
-    }
-    [data-testid="stSpinner"] i,
-    [data-testid="stSpinner"] svg,
-    .stSpinner svg circle {
-        border-top-color: #FFFFFF !important;
         stroke: #FFFFFF !important;
+        fill: #FFFFFF !important;
+        border-color: #FFFFFF !important;
+    }
+    .stSpinner > div {
+        border-top-color: #FFFFFF !important;
     }
 
     /* Vit text samt 18px teckenstorlek i chatten */
@@ -235,8 +233,7 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     bot_response = None
 
     with st.chat_message("assistant", avatar=AI_AVATAR):
-        # Uppdaterad laddningstext
-        with st.spinner("Hämtar information…"):
+        with st.spinner("Hämtar information..."):
             # Försök först med primärmodellen gemini-3.6-flash upp till 2 gånger
             for attempt in range(2):
                 try:
