@@ -46,19 +46,7 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Keyframes för mjuk slide-in nedifrån */
-    @keyframes slideUp {
-        0% {
-            transform: translateY(100%);
-            opacity: 0;
-        }
-        100% {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
-
-    /* Vit bakgrund på botten med vertikal centrering och animering vid sidladdning */
+    /* Vit bakgrund på bottenkontrollern utan isolerad animation */
     .st-emotion-cache-6shykm,
     [data-testid="stBottom"],
     [data-testid="stBottom"] > div {
@@ -68,7 +56,30 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+
+    /* Keyframes för mjuk slide-in av enbart inputfältet nedifrån */
+    @keyframes slideUpInput {
+        0% {
+            transform: translateY(40px);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Animera enbart själva det vita fältet/inputboxen */
+    [data-testid="stChatInput"] {
+        border: 2px solid #9C6EF9 !important;
+        border-radius: 24px !important;
+        background-color: #FFFFFF !important;
+        box-shadow: none !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
 
     .logo-container {
@@ -133,16 +144,6 @@ st.markdown("""
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
-    }
-
-    [data-testid="stChatInput"] {
-        border: 2px solid #9C6EF9 !important;
-        border-radius: 24px !important;
-        background-color: #FFFFFF !important;
-        box-shadow: none !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        align-items: center !important;
     }
 
     .stChatInputContainer,
