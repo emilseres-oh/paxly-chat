@@ -46,65 +46,76 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Navbar-styling för st.radio */
+    .stMainBlockContainer {
+        padding-top: 5rem !important;
+    }
+
+    /* Fixerad Navbar LÄNGST UPPI MITTEN */
     [data-testid="stRadio"] {
-        width: 100% !important;
-        display: flex !important;
-        justify-content: center !important;
-        margin-bottom: 25px !important;
+        position: fixed !important;
+        top: 20px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 999999 !important;
+        width: auto !important;
+        margin: 0 !important;
     }
 
     [data-testid="stRadio"] > div {
         display: flex !important;
         flex-direction: row !important;
         justify-content: center !important;
-        gap: 12px !important;
-        background: rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(10px) !important;
-        padding: 6px 12px !important;
+        gap: 6px !important;
+        background: rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        padding: 6px 10px !important;
         border-radius: 40px !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* Dölj radionätets cirklar */
-    [data-testid="stRadio"] label > div:first-child {
+    /* Strikt borttagning av alla radio-prickar och cirklar */
+    [data-testid="stRadio"] label > div:first-child,
+    [data-testid="stRadio"] input[type="radio"],
+    [data-testid="stRadio"] [data-baseweb="radio"] > div:first-child,
+    [data-testid="stRadio"] label span:first-child {
         display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        visibility: hidden !important;
     }
 
-    /* Styling för navigationsknapparna */
+    /* Styling för klickbara renodlade knappar utan prickar */
     [data-testid="stRadio"] label {
         padding: 8px 24px !important;
         border-radius: 30px !important;
         cursor: pointer !important;
         transition: all 0.25s ease-in-out !important;
         margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     [data-testid="stRadio"] label p {
-        color: rgba(255, 255, 255, 0.7) !important;
-        font-size: 16px !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+        font-size: 15px !important;
         font-weight: 500 !important;
         margin: 0 !important;
     }
 
-    /* Aktiv flik i Navbaren */
+    /* Aktiv flik */
     [data-testid="stRadio"] label:has(input:checked) {
         background-color: #9C6EF9 !important;
-        box-shadow: 0 4px 14px rgba(156, 110, 249, 0.4) !important;
+        box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5) !important;
     }
 
     [data-testid="stRadio"] label:has(input:checked) p {
         color: #FFFFFF !important;
         font-weight: 600 !important;
-    }
-
-    /* Hover-effekt */
-    [data-testid="stRadio"] label:hover:not(:has(input:checked)) {
-        background-color: rgba(255, 255, 255, 0.12) !important;
-    }
-
-    [data-testid="stRadio"] label:hover:not(:has(input:checked)) p {
-        color: #FFFFFF !important;
     }
 
     /* Vit bakgrund på bottenkontrollern i chattläget */
@@ -154,7 +165,7 @@ st.markdown("""
         align-items: center;
         width: 100%;
         margin-bottom: 25px !important;
-        margin-top: 5px;
+        margin-top: 10px;
         animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
     .logo-container img {
@@ -309,7 +320,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. NAVBAR HÖGST UPP PÅ SIDAN
+# 1. NAVBAR FIXERAD LÄNGST UPP
 selected_page = st.radio(
     "",
     ["Chatt", "Onboarding"],
