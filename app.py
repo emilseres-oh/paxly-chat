@@ -46,126 +46,52 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Förhindra automatiska skrollhopp vid sidbyte */
+    /* Stoppa ofrivilliga skrollhopp */
     html, body, .stAppContainer, .stApp {
         scroll-behavior: auto !important;
     }
 
     .stMainBlockContainer {
-        padding-top: 5.5rem !important;
+        padding-top: 6rem !important;
     }
 
-    /* Fixerad Navbar LÄNGST UPPI MITTEN */
-    [data-testid="stRadio"] {
+    /* Fixerad Navbar längst upp */
+    [data-testid="stSegmentedControl"] {
         position: fixed !important;
         top: 20px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         z-index: 999999 !important;
-        width: auto !important;
-        margin: 0 !important;
-    }
-
-    [data-testid="stRadio"] > div {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: center !important;
-        gap: 6px !important;
         background: rgba(255, 255, 255, 0.12) !important;
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
-        padding: 6px 10px !important;
+        padding: 6px !important;
         border-radius: 40px !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* EXAKT OCH ABSOLUT BORTTAGNING AV RADIO-CIRKELN */
-    [data-testid="stRadio"] div[role="radiogroup"] label > div:first-child,
-    [data-testid="stRadio"] div[data-baseweb="radio"] > div:first-child,
-    [data-testid="stRadio"] label > div:not([data-testid="stMarkdownContainer"]) {
-        display: none !important;
-        width: 0 !important;
-        height: 0 !important;
-        min-width: 0 !important;
-        min-height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-    }
-
-    /* Kapselformade knappar */
-    [data-testid="stRadio"] label {
+    /* Knappar i Navbaren */
+    [data-testid="stSegmentedControl"] button {
+        border: none !important;
+        background: transparent !important;
+        color: rgba(255, 255, 255, 0.8) !important;
         padding: 8px 24px !important;
         border-radius: 30px !important;
-        cursor: pointer !important;
-        transition: background-color 0.2s ease !important;
-        margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    [data-testid="stRadio"] label p {
-        color: rgba(255, 255, 255, 0.8) !important;
         font-size: 15px !important;
         font-weight: 500 !important;
-        margin: 0 !important;
+        transition: all 0.2s ease !important;
     }
 
-    /* Aktiv flik */
-    [data-testid="stRadio"] label:has(input:checked) {
+    /* Aktiv knapp i Navbaren */
+    [data-testid="stSegmentedControl"] button[aria-selected="true"] {
         background-color: #9C6EF9 !important;
+        color: #FFFFFF !important;
+        font-weight: 600 !important;
         box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5) !important;
     }
 
-    [data-testid="stRadio"] label:has(input:checked) p {
-        color: #FFFFFF !important;
-        font-weight: 600 !important;
-    }
-
-    /* Vit bakgrund på bottenkontrollern i chattläget */
-    .st-emotion-cache-6shykm,
-    [data-testid="stBottom"],
-    [data-testid="stBottom"] > div {
-        background-color: #FFFFFF !important;
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    /* Animationer */
-    @keyframes slideUpInput {
-        0% { transform: translateY(40px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes popScale {
-        0% { transform: scale(0.85); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes popInCenter {
-        0% { transform: scale(0.85); opacity: 0; }
-        60% { transform: scale(1.02); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    /* Inputbox & Logotyp */
-    [data-testid="stChatInput"] {
-        border: 2px solid #9C6EF9 !important;
-        border-radius: 24px !important;
-        background-color: #FFFFFF !important;
-        box-shadow: none !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        align-items: center !important;
-        animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-    }
-
+    /* Logotyp */
     .logo-container {
         display: flex;
         justify-content: center;
@@ -188,6 +114,40 @@ st.markdown("""
         }
     }
 
+    /* Vit bakgrund på bottenkontrollern i chattläget */
+    [data-testid="stBottom"],
+    [data-testid="stBottom"] > div {
+        background-color: #FFFFFF !important;
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    /* Animationer */
+    @keyframes slideUpInput {
+        0% { transform: translateY(40px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes popScale {
+        0% { transform: scale(0.85); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes popInCenter {
+        0% { transform: scale(0.85); opacity: 0; }
+        60% { transform: scale(1.02); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Inputbox & Chat */
+    [data-testid="stChatInput"] {
+        border: 2px solid #9C6EF9 !important;
+        border-radius: 24px !important;
+        background-color: #FFFFFF !important;
+        box-shadow: none !important;
+        animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+
     /* Loader */
     .custom-loader {
         display: flex !important;
@@ -195,53 +155,41 @@ st.markdown("""
         gap: 12px !important;
         color: #FFFFFF !important;
         font-size: 18px !important;
-        line-height: 1 !important;
         margin-top: -18px !important;
-        padding: 0 !important;
     }
     .custom-spinner {
         width: 20px !important;
         height: 20px !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
         border: 3px solid rgba(255, 255, 255, 0.3) !important;
         border-radius: 50% !important;
         border-top-color: #FFFFFF !important;
         animation: spin-loader 0.8s linear infinite !important;
-        box-sizing: border-box !important;
     }
     @keyframes spin-loader {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
 
-    /* Typografi */
+    /* Typografi & Chat-meddelanden */
     p, .stChatMessage p {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-size: 18px !important;
     }
 
-    [data-testid="stChatMessageContainer"] {
-        gap: 0.4rem !important;
-    }
-
-    /* Användarens meddelanden = 0.05 opacitet */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.05) !important;
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
         animation: popInCenter 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
-        transform-origin: center center !important;
     }
 
-    /* AI-assistentens meddelanden = 0.15 opacitet */
     [data-testid="stChatMessageContainer"] > div:nth-child(even) .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Onboarding-kort (1-kolumn) */
+    /* Onboarding-kort */
     .onboarding-card {
         background-color: rgba(255, 255, 255, 0.1) !important;
         border-radius: 20px !important;
@@ -250,88 +198,29 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         width: 100% !important;
     }
-    .onboarding-card h2 {
-        color: #9C6EF9 !important;
-        font-size: 24px !important;
-        margin-top: 0 !important;
-    }
-    .onboarding-card h3 {
-        color: #FFFFFF !important;
-        font-size: 20px !important;
-    }
-    .onboarding-card p, .onboarding-card li {
-        font-size: 16px !important;
-        line-height: 1.6 !important;
-        color: #E0E0E0 !important;
-    }
-
-    .stChatInputContainer,
-    .stChatInputContainer > div,
-    [data-testid="stChatInput"] > div {
-        border: none !important;
-        border-radius: 24px !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        display: flex !important;
-        align-items: center !important;
-        width: 100% !important;
-    }
+    .onboarding-card h2 { color: #9C6EF9 !important; font-size: 24px !important; margin-top: 0 !important; }
+    .onboarding-card h3 { color: #FFFFFF !important; font-size: 20px !important; }
+    .onboarding-card p, .onboarding-card li { font-size: 16px !important; line-height: 1.6 !important; color: #E0E0E0 !important; }
 
     .stChatInputContainer textarea,
-    .stChatInputContainer p,
-    .stChatInputContainer span,
     [data-testid="stChatInput"] textarea {
         color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
         font-size: 18px !important;
-        border-radius: 24px !important;
-        background-color: transparent !important;
-        background: transparent !important;
-        border: none !important;
-        min-height: 48px !important;
-        line-height: 48px !important;
-        padding-top: 0px !important;
-        padding-bottom: 0px !important;
-        margin: 0 !important;
     }
 
-    .stChatInputContainer textarea::placeholder {
-        color: #666666 !important;
-        -webkit-text-fill-color: #666666 !important;
-        font-size: 18px !important;
-        line-height: 48px !important;
-    }
-
-    [data-testid="stChatInput"]:focus-within {
-        border: 2px solid #9C6EF9 !important;
-        box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
-    }
-
-    [data-testid="stChatInputSubmitButton"] button,
-    [data-testid="stChatInput"] button {
+    [data-testid="stChatInputSubmitButton"] button {
         background-color: #9C6EF9 !important;
-        color: #FFFFFF !important;
-        border: none !important;
-    }
-    
-    [data-testid="stChatInputSubmitButton"] button:hover,
-    [data-testid="stChatInput"] button:hover {
-        background-color: #8552f8 !important;
-    }
-
-    [data-testid="stChatInputSubmitButton"] svg,
-    [data-testid="stChatInput"] svg {
-        fill: #FFFFFF !important;
         color: #FFFFFF !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 1. NAVBAR FIXERAD LÄNGST UPP
-selected_page = st.radio(
+# 1. KLASSISK NAVBAR (Segmented Control)
+selected_page = st.segmented_control(
     "",
-    ["Chatt", "Onboarding"],
-    horizontal=True,
+    options=["Chatt", "Onboarding"],
+    default="Chatt",
     label_visibility="collapsed"
 )
 
@@ -390,9 +279,17 @@ if selected_page == "Chatt":
             ''', unsafe_allow_html=True)
 
             try:
+                # Bygg historiken för API-anropet
+                contents = []
+                for msg in st.session_state.messages:
+                    contents.append({
+                        "role": "user" if msg["role"] == "user" else "model",
+                        "parts": [{"text": msg["content"]}]
+                    })
+
                 response = client.models.generate_content(
-                    model="gemini-3.6-flash",
-                    contents=prompt,
+                    model="gemini-2.5-flash",
+                    contents=contents,
                     config={"system_instruction": SYSTEM_INSTRUCTION}
                 )
                 bot_response = response.text
@@ -461,6 +358,6 @@ elif selected_page == "Onboarding":
         <div class="onboarding-card">
             <h3>📖 Fullständig Användardokumentation</h3>
             <p>För mer ingående instruktioner, vanliga frågor och detaljerade guider om samtliga funktioner i Paxly, se vår fullständiga dokumentation:</p>
-            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a>[span_0](start_span)[span_0](end_span)</p>
+            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a></p>
         </div>
     ''', unsafe_allow_html=True)
