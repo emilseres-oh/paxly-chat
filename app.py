@@ -169,7 +169,7 @@ st.markdown("""
         gap: 0.4rem !important;
     }
 
-    /* Användarens meddelanderuta (Udda i ordningen): 15% opacitet + Centrum-animation */
+    /* Standardinställning för alla meddelanderutor (Användarens = 0.15 / 15%) */
     [data-testid="stChatMessage"] {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
@@ -179,8 +179,10 @@ st.markdown("""
         transform-origin: center center !important;
     }
 
-    /* AI-meddelanderuta (Jämn i ordningen): 5% opacitet (10% mindre) + Centrum-animation */
-    [data-testid="stChatMessageContainer"] > div:nth-child(even) [data-testid="stChatMessage"] {
+    /* AI-assistentens meddelanderuta: Strikt sänkt opacitet till 0.05 (5%) */
+    [data-testid="stChatMessage"]:has(img[src*="data:image"]),
+    [data-testid="stChatMessageContainer"] > div[data-testid="stChatMessage"]:nth-of-type(even),
+    .stChatMessage[data-test-async="true"] {
         background-color: rgba(255, 255, 255, 0.05) !important;
     }
 
