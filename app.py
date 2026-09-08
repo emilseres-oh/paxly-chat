@@ -42,12 +42,16 @@ st.markdown(bg_css + """
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Vit bakgrund på hela bottensektionen för att täppa till 'hålet' */
+    /* Vit bakgrund på botten med vertikal centrering */
     .st-emotion-cache-6shykm,
     [data-testid="stBottom"],
     [data-testid="stBottom"] > div {
         background-color: #FFFFFF !important;
+        padding-top: 1rem !important;
         padding-bottom: 1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     /* Logotypens storlek (max 300px) och avstånd nedåt */
@@ -74,21 +78,23 @@ st.markdown(bg_css + """
         gap: 0.4rem !important;
     }
 
-    /* Meddelanderutor */
+    /* Meddelanderutor med ökad padding */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
-        padding: 10px 20px !important;
-        margin-bottom: 6px !important;
+        padding: 16px 28px !important;
+        margin-bottom: 8px !important;
     }
 
-    /* Yttre behållare - alltid 2px border för att förhindra höjdförändring vid fokus */
+    /* Yttre behållare - alltid 2px border för att förhindra höjdförändring */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
         border-radius: 24px !important;
         background-color: #FFFFFF !important;
         box-shadow: none !important;
         box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
     }
 
     /* Inre behållare rensad från border */
@@ -99,6 +105,9 @@ st.markdown(bg_css + """
         border-radius: 24px !important;
         background-color: transparent !important;
         box-shadow: none !important;
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
     }
 
     /* Svart text, vertikalt centrerad */
@@ -117,6 +126,7 @@ st.markdown(bg_css + """
         line-height: 48px !important;
         padding-top: 0px !important;
         padding-bottom: 0px !important;
+        margin: 0 !important;
     }
 
     /* Placeholder-text */
@@ -127,7 +137,7 @@ st.markdown(bg_css + """
         line-height: 48px !important;
     }
 
-    /* Lägger på skugga vid klick UTAN att ändra storlek eller tjocklek på ramen */
+    /* Skugga vid klick/fokus */
     [data-testid="stChatInput"]:focus-within {
         border: 2px solid #9C6EF9 !important;
         box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
