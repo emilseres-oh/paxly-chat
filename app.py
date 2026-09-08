@@ -74,7 +74,7 @@ st.markdown(bg_css + """
         background-color: #FFFFFF !important;
     }
 
-    /* Svart text enbart inne i input-fältet */
+    /* Svart text enbart inne i input-fältet med genomskinlig bakgrund */
     .stChatInputContainer textarea,
     .stChatInputContainer p,
     .stChatInputContainer span,
@@ -146,7 +146,7 @@ if prompt := st.chat_input("Skriv din fråga här..."):
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.6-flash",
             contents=prompt,
             config={"system_instruction": SYSTEM_INSTRUCTION}
         )
