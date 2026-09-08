@@ -2,12 +2,50 @@ import os
 import streamlit as st
 from google import genai
 
-st.set_page_config(page_title="Paxly Support", page_icon="💬")
+st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
-st.title("Paxly Support")
-st.write("Välkommen! Ställ dina frågor om Paxly här.")
+# Anpassad CSS för mörk bakgrund (#080D42), centrerad logga och ljus text
+st.markdown("""
+    <style>
+    /* Huvudbakgrund */
+    .stApp {
+        background-color: #080D42;
+        color: #FFFFFF;
+    }
+    
+    /* Dölj Streamlit-menyer för renare känsla */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Centrera logotypen */
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 30px;
+        margin-top: 20px;
+    }
+    .logo-container img {
+        max-width: 250px;
+        height: auto;
+    }
+    
+    /* Anpassa chattmeddelanden för mörk bakgrund */
+    .stChatMessage {
+        background-color: #12195E !important;
+        border-radius: 12px;
+        color: #FFFFFF !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# Hämta API-nyckel från secrets
+# Visa centrerad logotyp istället för textrubrik
+if os.path.exists("logo.png"):
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.image("logo.png", use_container_width=True)
+
 api_key = os.environ.get("GEMINI_API_KEY")
 
 if not api_key:
@@ -38,18 +76,20 @@ if "messages" not in st.session_state:
 
 # Visa tidigare meddelanden
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
+    avatar = "👤" if message["role"] == "user" else "🤖"
+    with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
 
 # Hantera användarens input
 if prompt := st.chat_input("Skriv din fråga här..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar="👤"):
         st.markdown(prompt)
 
     try:
+        # Använder gemini-2.0-flash för att undvika 404-felet
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=prompt,
             config={"system_instruction": SYSTEM_INSTRUCTION}
         )
@@ -57,6 +97,6 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     except Exception as e:
         bot_response = f"Ett fel uppstod vid kontakt med AI-tjänsten: {e}"
 
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar="🤖"):
         st.markdown(bot_response)
     st.session_state.messages.append({"role": "assistant", "content": bot_response})
