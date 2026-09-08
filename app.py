@@ -77,6 +77,21 @@ st.markdown(bg_css + """
         }
     }
 
+    /* Gör spinnern (snurrande cirkeln och texten) vit */
+    [data-testid="stSpinner"],
+    [data-testid="stSpinner"] > div,
+    [data-testid="stSpinner"] p,
+    .stSpinner p {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+    }
+    [data-testid="stSpinner"] i,
+    [data-testid="stSpinner"] svg,
+    .stSpinner svg circle {
+        border-top-color: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+    }
+
     /* Vit text samt 18px teckenstorlek i chatten */
     p, .stChatMessage p {
         color: #FFFFFF !important;
@@ -220,8 +235,8 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     bot_response = None
 
     with st.chat_message("assistant", avatar=AI_AVATAR):
-        # Visa en laddnings-loader medan modellsvaret hämtas
-        with st.spinner("Tänker så det knakar..."):
+        # Uppdaterad laddningstext
+        with st.spinner("Hämtar information…"):
             # Försök först med primärmodellen gemini-3.6-flash upp till 2 gånger
             for attempt in range(2):
                 try:
