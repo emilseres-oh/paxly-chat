@@ -46,67 +46,59 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Stoppa skrollhopp och lås sidhöjden */
+    /* Förhindra skrollhopp vid sidbyte */
     html, body, .stAppContainer, .stApp {
         scroll-behavior: auto !important;
     }
 
-    /* Fast avstånd i toppen så innehållet inte hoppar under navbaren */
     .stMainBlockContainer {
-        padding-top: 6.5rem !important;
+        padding-top: 6rem !important;
     }
 
-    /* EXAKT CENTRERING AV MENYN HÖGST UPP (FIXED) */
+    /* FIXERAD OCH CENTRERAD NAVBAR HÖGST UPP */
     [data-testid="stSegmentedControl"] {
         position: fixed !important;
         top: 20px !important;
-        left: 0 !important;
-        right: 0 !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        width: fit-content !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         z-index: 999999 !important;
+        width: auto !important;
+        margin: 0 !important;
     }
 
-    /* Utseende på själva navbaren (Pill-design) */
     [data-testid="stSegmentedControl"] > div {
-        background: rgba(15, 23, 42, 0.65) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        padding: 5px !important;
-        border-radius: 9999px !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
-        gap: 4px !important;
+        background: rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        padding: 5px 8px !important;
+        border-radius: 40px !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+        display: flex !important;
+        gap: 6px !important;
     }
 
-    /* Styling av knapparna i menyn */
+    /* Styling av knapparna i navbaren */
     [data-testid="stSegmentedControl"] button {
         border: none !important;
         background: transparent !important;
         padding: 8px 24px !important;
-        border-radius: 9999px !important;
+        border-radius: 30px !important;
         cursor: pointer !important;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        transition: all 0.2s ease !important;
     }
 
-    /* Textstyling i knapparna */
     [data-testid="stSegmentedControl"] button p {
-        color: rgba(255, 255, 255, 0.7) !important;
+        color: rgba(255, 255, 255, 0.8) !important;
         font-size: 15px !important;
         font-weight: 500 !important;
         margin: 0 !important;
     }
 
-    /* Hover-effekt på icke-valda knappar */
-    [data-testid="stSegmentedControl"] button:hover p {
-        color: #FFFFFF !important;
-    }
-
-    /* Aktiv vald knapp */
+    /* Aktiv knapp i navbaren */
     [data-testid="stSegmentedControl"] button[aria-selected="true"] {
         background-color: #9C6EF9 !important;
-        box-shadow: 0 4px 12px rgba(156, 110, 249, 0.4) !important;
+        box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5) !important;
     }
 
     [data-testid="stSegmentedControl"] button[aria-selected="true"] p {
@@ -121,17 +113,18 @@ st.markdown("""
         align-items: center;
         width: 100%;
         margin-bottom: 25px !important;
-        margin-top: 0px;
+        margin-top: 10px;
+        animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
     .logo-container img {
-        width: 280px !important;
+        width: 300px !important;
         max-width: 80% !important;
         height: auto !important;
     }
 
     @media (max-width: 768px) {
         .logo-container img {
-            width: 180px !important;
+            width: 200px !important;
             max-width: 70% !important;
         }
     }
@@ -147,6 +140,23 @@ st.markdown("""
         justify-content: center !important;
     }
 
+    /* Animationer */
+    @keyframes slideUpInput {
+        0% { transform: translateY(40px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes popScale {
+        0% { transform: scale(0.85); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes popInCenter {
+        0% { transform: scale(0.85); opacity: 0; }
+        60% { transform: scale(1.02); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
     /* Inputbox */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
@@ -156,6 +166,7 @@ st.markdown("""
         box-sizing: border-box !important;
         display: flex !important;
         align-items: center !important;
+        animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
 
     /* Loader */
@@ -202,6 +213,8 @@ st.markdown("""
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
+        animation: popInCenter 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+        transform-origin: center center !important;
     }
 
     /* AI-assistentens meddelanden */
@@ -233,24 +246,62 @@ st.markdown("""
         color: #E0E0E0 !important;
     }
 
+    .stChatInputContainer,
+    .stChatInputContainer > div,
+    [data-testid="stChatInput"] > div {
+        border: none !important;
+        border-radius: 24px !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+
     .stChatInputContainer textarea,
+    .stChatInputContainer p,
+    .stChatInputContainer span,
     [data-testid="stChatInput"] textarea {
         color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
         font-size: 18px !important;
+        border-radius: 24px !important;
+        background-color: transparent !important;
+        background: transparent !important;
+        border: none !important;
+        min-height: 48px !important;
+        line-height: 48px !important;
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+        margin: 0 !important;
     }
 
-    [data-testid="stChatInputSubmitButton"] button {
+    .stChatInputContainer textarea::placeholder {
+        color: #666666 !important;
+        -webkit-text-fill-color: #666666 !important;
+        font-size: 18px !important;
+        line-height: 48px !important;
+    }
+
+    [data-testid="stChatInput"]:focus-within {
+        border: 2px solid #9C6EF9 !important;
+        box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
+    }
+
+    [data-testid="stChatInputSubmitButton"] button,
+    [data-testid="stChatInput"] button {
         background-color: #9C6EF9 !important;
         color: #FFFFFF !important;
         border: none !important;
     }
     
-    [data-testid="stChatInputSubmitButton"] button:hover {
+    [data-testid="stChatInputSubmitButton"] button:hover,
+    [data-testid="stChatInput"] button:hover {
         background-color: #8552f8 !important;
     }
 
-    [data-testid="stChatInputSubmitButton"] svg {
+    [data-testid="stChatInputSubmitButton"] svg,
+    [data-testid="stChatInput"] svg {
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
     }
