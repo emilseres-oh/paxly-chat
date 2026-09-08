@@ -54,29 +54,36 @@ st.markdown(bg_css + """
         height: auto;
     }
 
-    /* Meddelanderutor */
+    /* Vit text i allmänhet samt i meddelanderutorna */
+    p, .stChatMessage p {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+    }
+
+    /* Meddelanderutor med border-radius 16px */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
-        border-radius: 99999px !important;
+        border-radius: 16px !important;
         padding: 12px 24px !important;
         margin-bottom: 15px !important;
-        color: #FFFFFF !important;
     }
 
-    /* Input-fältets form */
+    /* Input-fältets behållare */
     .stChatInputContainer {
-        border-radius: 99999px !important;
+        border-radius: 16px !important;
+        background-color: #FFFFFF !important;
     }
 
-    /* Tvinga svart text i input-fältet */
+    /* Svart text enbart inne i input-fältet */
     .stChatInputContainer textarea,
     .stChatInputContainer p,
     .stChatInputContainer span,
     [data-testid="stChatInput"] textarea {
         color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
-        border-radius: 99999px !important;
-        background-color: #FFFFFF !important;
+        border-radius: 16px !important;
+        background-color: transparent !important;
+        background: transparent !important;
     }
 
     /* Placeholder-text */
