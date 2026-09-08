@@ -73,29 +73,38 @@ st.markdown("""
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
-    .paxly-nav-item {
+    /* ALLTID VIT TEXT OCH INGEN UNDERLINE */
+    .paxly-nav-item,
+    .paxly-nav-item:hover,
+    .paxly-nav-item:visited,
+    .paxly-nav-item:active,
+    .paxly-nav-item:focus {
         background: transparent;
         border: none;
-        color: rgba(255, 255, 255, 0.8);
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
         padding: 8px 24px;
         border-radius: 30px;
         font-size: 15px;
         font-weight: 500;
         cursor: pointer;
-        text-decoration: none;
+        text-decoration: none !important;
         transition: all 0.2s ease;
         display: inline-block;
     }
 
-    .paxly-nav-item:hover {
-        color: #FFFFFF;
-    }
-
-    .paxly-nav-active {
+    /* AKTIV FLIK (Behåller bakgrund och fetare stil, men behåller den vita färgen utan underline) */
+    .paxly-nav-active,
+    .paxly-nav-active:hover,
+    .paxly-nav-active:visited,
+    .paxly-nav-active:active,
+    .paxly-nav-active:focus {
         background-color: #9C6EF9 !important;
         color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
         font-weight: 600 !important;
         box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5);
+        text-decoration: none !important;
     }
 
     /* Vit bakgrund på bottenkontrollern i chattläget */
@@ -301,7 +310,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Läs URL-parametrar för stabil navigering utan hopp
+# Läs URL-parametrar för navigeringen
 query_params = st.query_params
 selected_page = query_params.get("page", "Chatt")
 
