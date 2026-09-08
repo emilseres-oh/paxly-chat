@@ -79,6 +79,7 @@ st.markdown(bg_css + """
         border-radius: 24px !important;
         background-color: #FFFFFF !important;
         padding: 6px 12px !important;
+        border: 1px solid #9C6EF9 !important;
     }
 
     /* Svart text, vertikalt centrerad och större höjd */
@@ -106,10 +107,26 @@ st.markdown(bg_css + """
         line-height: 48px !important;
     }
 
-    /* Aktiv ram när man klickar i fältet */
+    /* Ersätt alla Streamlit-standardfärgade röd/rosa element (#ff4b4b) med #9C6EF9 */
     .stChatInputContainer:focus-within {
-        border: 2px solid #AD87FC !important;
-        box-shadow: 0 0 8px rgba(173, 135, 252, 0.5) !important;
+        border: 2px solid #9C6EF9 !important;
+        box-shadow: 0 0 8px rgba(156, 110, 249, 0.5) !important;
+    }
+
+    /* Skicka-knappen i inputfältet */
+    [data-testid="stChatInputSubmitButton"] button {
+        background-color: #9C6EF9 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+    }
+    
+    [data-testid="stChatInputSubmitButton"] button:hover {
+        background-color: #8552f8 !important;
+        color: #FFFFFF !important;
+    }
+
+    [data-testid="stChatInputSubmitButton"] svg {
+        fill: #FFFFFF !important;
     }
     </style>
 """, unsafe_allow_html=True)
