@@ -46,44 +46,50 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Stoppa ofrivilliga skrollhopp */
+    /* Förhindra automatiska skrollhopp vid sidbyte */
     html, body, .stAppContainer, .stApp {
         scroll-behavior: auto !important;
     }
 
     .stMainBlockContainer {
-        padding-top: 6rem !important;
+        padding-top: 5.5rem !important;
     }
 
-    /* Fixerad Navbar längst upp */
+    /* Fixerad Navbar LÄNGST UPPI MITTEN (Anpassad för segmented_control) */
     [data-testid="stSegmentedControl"] {
         position: fixed !important;
         top: 20px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         z-index: 999999 !important;
+        width: auto !important;
+        margin: 0 !important;
+    }
+
+    [data-testid="stSegmentedControl"] > div {
         background: rgba(255, 255, 255, 0.12) !important;
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
-        padding: 6px !important;
+        padding: 6px 10px !important;
         border-radius: 40px !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* Knappar i Navbaren */
+    /* Kapselformade knappar i navbaren */
     [data-testid="stSegmentedControl"] button {
+        padding: 8px 24px !important;
+        border-radius: 30px !important;
         border: none !important;
         background: transparent !important;
         color: rgba(255, 255, 255, 0.8) !important;
-        padding: 8px 24px !important;
-        border-radius: 30px !important;
         font-size: 15px !important;
         font-weight: 500 !important;
+        cursor: pointer !important;
         transition: all 0.2s ease !important;
     }
 
-    /* Aktiv knapp i Navbaren */
+    /* Aktiv flik */
     [data-testid="stSegmentedControl"] button[aria-selected="true"] {
         background-color: #9C6EF9 !important;
         color: #FFFFFF !important;
@@ -91,7 +97,47 @@ st.markdown("""
         box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5) !important;
     }
 
-    /* Logotyp */
+    /* Vit bakgrund på bottenkontrollern i chattläget */
+    .st-emotion-cache-6shykm,
+    [data-testid="stBottom"],
+    [data-testid="stBottom"] > div {
+        background-color: #FFFFFF !important;
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Animationer */
+    @keyframes slideUpInput {
+        0% { transform: translateY(40px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes popScale {
+        0% { transform: scale(0.85); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes popInCenter {
+        0% { transform: scale(0.85); opacity: 0; }
+        60% { transform: scale(1.02); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Inputbox & Logotyp */
+    [data-testid="stChatInput"] {
+        border: 2px solid #9C6EF9 !important;
+        border-radius: 24px !important;
+        background-color: #FFFFFF !important;
+        box-shadow: none !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+
     .logo-container {
         display: flex;
         justify-content: center;
@@ -114,40 +160,6 @@ st.markdown("""
         }
     }
 
-    /* Vit bakgrund på bottenkontrollern i chattläget */
-    [data-testid="stBottom"],
-    [data-testid="stBottom"] > div {
-        background-color: #FFFFFF !important;
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
-    }
-
-    /* Animationer */
-    @keyframes slideUpInput {
-        0% { transform: translateY(40px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes popScale {
-        0% { transform: scale(0.85); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes popInCenter {
-        0% { transform: scale(0.85); opacity: 0; }
-        60% { transform: scale(1.02); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    /* Inputbox & Chat */
-    [data-testid="stChatInput"] {
-        border: 2px solid #9C6EF9 !important;
-        border-radius: 24px !important;
-        background-color: #FFFFFF !important;
-        box-shadow: none !important;
-        animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-    }
-
     /* Loader */
     .custom-loader {
         display: flex !important;
@@ -155,41 +167,53 @@ st.markdown("""
         gap: 12px !important;
         color: #FFFFFF !important;
         font-size: 18px !important;
+        line-height: 1 !important;
         margin-top: -18px !important;
+        padding: 0 !important;
     }
     .custom-spinner {
         width: 20px !important;
         height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
         border: 3px solid rgba(255, 255, 255, 0.3) !important;
         border-radius: 50% !important;
         border-top-color: #FFFFFF !important;
         animation: spin-loader 0.8s linear infinite !important;
+        box-sizing: border-box !important;
     }
     @keyframes spin-loader {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
 
-    /* Typografi & Chat-meddelanden */
+    /* Typografi */
     p, .stChatMessage p {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-size: 18px !important;
     }
 
+    [data-testid="stChatMessageContainer"] {
+        gap: 0.4rem !important;
+    }
+
+    /* Användarens meddelanden = 0.05 opacitet */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.05) !important;
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
         animation: popInCenter 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+        transform-origin: center center !important;
     }
 
+    /* AI-assistentens meddelanden = 0.15 opacitet */
     [data-testid="stChatMessageContainer"] > div:nth-child(even) .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Onboarding-kort */
+    /* Onboarding-kort (1-kolumn) */
     .onboarding-card {
         background-color: rgba(255, 255, 255, 0.1) !important;
         border-radius: 20px !important;
@@ -198,28 +222,87 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         width: 100% !important;
     }
-    .onboarding-card h2 { color: #9C6EF9 !important; font-size: 24px !important; margin-top: 0 !important; }
-    .onboarding-card h3 { color: #FFFFFF !important; font-size: 20px !important; }
-    .onboarding-card p, .onboarding-card li { font-size: 16px !important; line-height: 1.6 !important; color: #E0E0E0 !important; }
+    .onboarding-card h2 {
+        color: #9C6EF9 !important;
+        font-size: 24px !important;
+        margin-top: 0 !important;
+    }
+    .onboarding-card h3 {
+        color: #FFFFFF !important;
+        font-size: 20px !important;
+    }
+    .onboarding-card p, .onboarding-card li {
+        font-size: 16px !important;
+        line-height: 1.6 !important;
+        color: #E0E0E0 !important;
+    }
+
+    .stChatInputContainer,
+    .stChatInputContainer > div,
+    [data-testid="stChatInput"] > div {
+        border: none !important;
+        border-radius: 24px !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
 
     .stChatInputContainer textarea,
+    .stChatInputContainer p,
+    .stChatInputContainer span,
     [data-testid="stChatInput"] textarea {
         color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
         font-size: 18px !important;
+        border-radius: 24px !important;
+        background-color: transparent !important;
+        background: transparent !important;
+        border: none !important;
+        min-height: 48px !important;
+        line-height: 48px !important;
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+        margin: 0 !important;
     }
 
-    [data-testid="stChatInputSubmitButton"] button {
+    .stChatInputContainer textarea::placeholder {
+        color: #666666 !important;
+        -webkit-text-fill-color: #666666 !important;
+        font-size: 18px !important;
+        line-height: 48px !important;
+    }
+
+    [data-testid="stChatInput"]:focus-within {
+        border: 2px solid #9C6EF9 !important;
+        box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
+    }
+
+    [data-testid="stChatInputSubmitButton"] button,
+    [data-testid="stChatInput"] button {
         background-color: #9C6EF9 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+    }
+    
+    [data-testid="stChatInputSubmitButton"] button:hover,
+    [data-testid="stChatInput"] button:hover {
+        background-color: #8552f8 !important;
+    }
+
+    [data-testid="stChatInputSubmitButton"] svg,
+    [data-testid="stChatInput"] svg {
+        fill: #FFFFFF !important;
         color: #FFFFFF !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 1. KLASSISK NAVBAR (Segmented Control)
+# 1. NAVBAR FIXERAD LÄNGST UPP (Använder Streamlits segmented_control istället för radio)
 selected_page = st.segmented_control(
     "",
-    options=["Chatt", "Onboarding"],
+    ["Chatt", "Onboarding"],
     default="Chatt",
     label_visibility="collapsed"
 )
@@ -279,17 +362,9 @@ if selected_page == "Chatt":
             ''', unsafe_allow_html=True)
 
             try:
-                # Bygg historiken för API-anropet
-                contents = []
-                for msg in st.session_state.messages:
-                    contents.append({
-                        "role": "user" if msg["role"] == "user" else "model",
-                        "parts": [{"text": msg["content"]}]
-                    })
-
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=contents,
+                    model="gemini-3.6-flash",
+                    contents=prompt,
                     config={"system_instruction": SYSTEM_INSTRUCTION}
                 )
                 bot_response = response.text
