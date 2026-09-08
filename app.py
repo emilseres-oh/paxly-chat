@@ -46,91 +46,60 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Lås skrollning vid sidbyte för att undvika alla typer av hopp */
+    /* Förhindra automatiska skrollhopp vid sidbyte */
     html, body, .stAppContainer, .stApp {
         scroll-behavior: auto !important;
     }
 
     .stMainBlockContainer {
-        padding-top: 6rem !important;
+        padding-top: 5.5rem !important;
     }
 
-    /* SKRÄDDARSYDD CENTRERAD NAVBAR-CONTAINER */
-    div[data-testid="stColumn"] {
-        padding: 0 !important;
+    /* RENSAD & STABIL NAVBAR */
+    .paxly-navbar-container {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 999999;
+        display: flex;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 6px 10px;
+        border-radius: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
-    /* Flytande capsule-behållare högst upp i mitten */
-    .custom-navbar-wrapper {
-        position: fixed !important;
-        top: 20px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        background: rgba(255, 255, 255, 0.12) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        padding: 4px !important;
-        border-radius: 40px !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-        gap: 6px !important;
+    .paxly-nav-item {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.8);
+        padding: 8px 24px;
+        border-radius: 30px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-block;
     }
 
-    /* Styling för Streamlit-knapparna inuti navbaren */
-    .custom-navbar-wrapper button {
-        border: none !important;
-        background: transparent !important;
-        color: rgba(255, 255, 255, 0.8) !important;
-        padding: 8px 24px !important;
-        border-radius: 30px !important;
-        font-size: 15px !important;
-        font-weight: 500 !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-        width: 100% !important;
-        margin: 0 !important;
+    .paxly-nav-item:hover {
+        color: #FFFFFF;
     }
 
-    /* Hover-effekt på knappar */
-    .custom-navbar-wrapper button:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-        color: #FFFFFF !important;
-    }
-
-    /* Aktiv knapps utseende */
-    .custom-navbar-wrapper .nav-active button {
+    .paxly-nav-active {
         background-color: #9C6EF9 !important;
         color: #FFFFFF !important;
         font-weight: 600 !important;
-        box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5) !important;
-    }
-
-    /* Logotyp container */
-    .logo-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        margin-bottom: 25px !important;
-        margin-top: 10px;
-        animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-    }
-    .logo-container img {
-        width: 300px !important;
-        max-width: 80% !important;
-        height: auto !important;
-    }
-
-    @media (max-width: 768px) {
-        .logo-container img {
-            width: 200px !important;
-            max-width: 70% !important;
-        }
+        box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5);
     }
 
     /* Vit bakgrund på bottenkontrollern i chattläget */
+    .st-emotion-cache-6shykm,
     [data-testid="stBottom"],
     [data-testid="stBottom"] > div {
         background-color: #FFFFFF !important;
@@ -158,7 +127,7 @@ st.markdown("""
         100% { transform: scale(1); opacity: 1; }
     }
 
-    /* Inputbox */
+    /* EXAKT ORIGINALEXEMPLAR FÖR CHATINPUT & LOGOTYP */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
         border-radius: 24px !important;
@@ -168,6 +137,28 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         animation: slideUpInput 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 25px !important;
+        margin-top: 10px;
+        animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+    .logo-container img {
+        width: 300px !important;
+        max-width: 80% !important;
+        height: auto !important;
+    }
+
+    @media (max-width: 768px) {
+        .logo-container img {
+            width: 200px !important;
+            max-width: 70% !important;
+        }
     }
 
     /* Loader */
@@ -208,7 +199,7 @@ st.markdown("""
         gap: 0.4rem !important;
     }
 
-    /* Användarens meddelanden */
+    /* Användarens meddelanden = 0.05 opacitet */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.05) !important;
         border-radius: 16px !important;
@@ -218,12 +209,12 @@ st.markdown("""
         transform-origin: center center !important;
     }
 
-    /* AI-assistentens meddelanden */
+    /* AI-assistentens meddelanden = 0.15 opacitet */
     [data-testid="stChatMessageContainer"] > div:nth-child(even) .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Onboarding-kort */
+    /* Onboarding-kort (1-kolumn) */
     .onboarding-card {
         background-color: rgba(255, 255, 255, 0.1) !important;
         border-radius: 20px !important;
@@ -247,59 +238,83 @@ st.markdown("""
         color: #E0E0E0 !important;
     }
 
+    /* EXAKT ORIGINALEXEMPLAR FÖR TEXTAREA & CHATINPUT */
+    .stChatInputContainer,
+    .stChatInputContainer > div,
+    [data-testid="stChatInput"] > div {
+        border: none !important;
+        border-radius: 24px !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+
     .stChatInputContainer textarea,
+    .stChatInputContainer p,
+    .stChatInputContainer span,
     [data-testid="stChatInput"] textarea {
         color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
         font-size: 18px !important;
+        border-radius: 24px !important;
+        background-color: transparent !important;
+        background: transparent !important;
+        border: none !important;
+        min-height: 48px !important;
+        line-height: 48px !important;
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+        margin: 0 !important;
     }
 
-    [data-testid="stChatInputSubmitButton"] button {
+    .stChatInputContainer textarea::placeholder {
+        color: #666666 !important;
+        -webkit-text-fill-color: #666666 !important;
+        font-size: 18px !important;
+        line-height: 48px !important;
+    }
+
+    [data-testid="stChatInput"]:focus-within {
+        border: 2px solid #9C6EF9 !important;
+        box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
+    }
+
+    [data-testid="stChatInputSubmitButton"] button,
+    [data-testid="stChatInput"] button {
         background-color: #9C6EF9 !important;
         color: #FFFFFF !important;
         border: none !important;
     }
     
-    [data-testid="stChatInputSubmitButton"] button:hover {
+    [data-testid="stChatInputSubmitButton"] button:hover,
+    [data-testid="stChatInput"] button:hover {
         background-color: #8552f8 !important;
     }
 
-    [data-testid="stChatInputSubmitButton"] svg {
+    [data-testid="stChatInputSubmitButton"] svg,
+    [data-testid="stChatInput"] svg {
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Läs in aktiv flik från Session State (standard = Chatt)
-if "selected_page" not in st.session_state:
-    st.session_state.selected_page = "Chatt"
+# Läs URL-parametrar för stabil navigering utan hopp
+query_params = st.query_params
+selected_page = query_params.get("page", "Chatt")
 
-# 1. RIKTIG REN NAVBAR (Byggd med knapp-container)
-nav_container = st.container()
-with nav_container:
-    st.markdown('<div class="custom-navbar-wrapper">', unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    
-    with c1:
-        is_chatt = st.session_state.selected_page == "Chatt"
-        st.markdown(f'<div class="{"nav-active" if is_chatt else ""}">', unsafe_allow_html=True)
-        if st.button("Chatt", key="nav_btn_chatt"):
-            st.session_state.selected_page = "Chatt"
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-    with c2:
-        is_onboarding = st.session_state.selected_page == "Onboarding"
-        st.markdown(f'<div class="{"nav-active" if is_onboarding else ""}">', unsafe_allow_html=True)
-        if st.button("Onboarding", key="nav_btn_onboarding"):
-            st.session_state.selected_page = "Onboarding"
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-    st.markdown('</div>', unsafe_allow_html=True)
+# Renders ren HTML/CSS Navbar
+chatt_class = "paxly-nav-item paxly-nav-active" if selected_page == "Chatt" else "paxly-nav-item"
+onboarding_class = "paxly-nav-item paxly-nav-active" if selected_page == "Onboarding" else "paxly-nav-item"
 
-selected_page = st.session_state.selected_page
+st.markdown(f'''
+    <div class="paxly-navbar-container">
+        <a href="?page=Chatt" target="_self" class="{chatt_class}">Chatt</a>
+        <a href="?page=Onboarding" target="_self" class="{onboarding_class}">Onboarding</a>
+    </div>
+''', unsafe_allow_html=True)
 
 # 2. LOGOTYPEN UNDER NAVBAR
 if os.path.exists("logo.png"):
@@ -425,7 +440,7 @@ elif selected_page == "Onboarding":
 
     st.markdown('''
         <div class="onboarding-card">
-            <h3>📖 Fullständig Användardokumentation</h3>
+            <h3>📖 Fullständiga Användardokumentation</h3>
             <p>För mer ingående instruktioner, vanliga frågor och detaljerade guider om samtliga funktioner i Paxly, se vår fullständiga dokumentation:</p>
             <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a></p>
         </div>
