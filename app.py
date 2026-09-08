@@ -169,7 +169,7 @@ st.markdown("""
         gap: 0.4rem !important;
     }
 
-    /* Grundinställning för meddelanderutor (Användarens: 15% opacitet) */
+    /* Standardinställning för meddelanderutor (Användarens: 15% opacitet) */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
@@ -177,15 +177,14 @@ st.markdown("""
         margin-bottom: 8px !important;
     }
 
-    /* AI-meddelanderutan: 10% mindre opacitet (5% opacitet / rgba 0.05) */
-    .stChatMessage:has([aria-label="Chatbot avatar"]),
-    .stChatMessage:has(img[alt="🤖"]),
-    [data-testid="stChatMessageContainer"] > div:nth-child(even) .stChatMessage {
+    /* AI-meddelanderutor får 10% lägre opacitet (0.05 / 5%) */
+    [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]),
+    [data-testid="stChatMessageContainer"] > div:nth-child(even) [data-testid="stChatMessage"] {
         background-color: rgba(255, 255, 255, 0.05) !important;
     }
 
     /* Applicera ENBART bubbel-animationen på det SENASTE meddelandet */
-    [data-testid="stChatMessageContainer"] > div:last-child .stChatMessage {
+    [data-testid="stChatMessageContainer"] > div:last-child [data-testid="stChatMessage"] {
         animation: popInCenter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
         transform-origin: center center !important;
         will-change: transform, opacity;
