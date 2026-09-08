@@ -46,36 +46,65 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Centrera Segmented Control högst upp */
-    [data-testid="stSegmentedControl"], div[role="radiogroup"] {
+    /* Navbar-styling för st.radio */
+    [data-testid="stRadio"] {
+        width: 100% !important;
         display: flex !important;
         justify-content: center !important;
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        padding: 6px !important;
+        margin-bottom: 25px !important;
+    }
+
+    [data-testid="stRadio"] > div {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        gap: 12px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        backdrop-filter: blur(10px) !important;
+        padding: 6px 12px !important;
+        border-radius: 40px !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+
+    /* Dölj radionätets cirklar */
+    [data-testid="stRadio"] label > div:first-child {
+        display: none !important;
+    }
+
+    /* Styling för navigationsknapparna */
+    [data-testid="stRadio"] label {
+        padding: 8px 24px !important;
         border-radius: 30px !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        margin: 10px auto 20px auto !important;
-        max-width: 300px !important;
+        cursor: pointer !important;
+        transition: all 0.25s ease-in-out !important;
+        margin: 0 !important;
     }
 
-    [data-testid="stSegmentedControl"] button, div[role="radiogroup"] label {
-        flex: 1 !important;
-        border-radius: 24px !important;
-        border: none !important;
-        color: #FFFFFF !important;
+    [data-testid="stRadio"] label p {
+        color: rgba(255, 255, 255, 0.7) !important;
         font-size: 16px !important;
-        font-weight: 600 !important;
-        padding: 8px 16px !important;
-        text-align: center !important;
-        transition: all 0.3s ease !important;
-        background: transparent !important;
+        font-weight: 500 !important;
+        margin: 0 !important;
     }
 
-    [data-testid="stSegmentedControl"] button[aria-selected="true"], 
-    div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) {
+    /* Aktiv flik i Navbaren */
+    [data-testid="stRadio"] label:has(input:checked) {
         background-color: #9C6EF9 !important;
+        box-shadow: 0 4px 14px rgba(156, 110, 249, 0.4) !important;
+    }
+
+    [data-testid="stRadio"] label:has(input:checked) p {
         color: #FFFFFF !important;
-        box-shadow: 0 4px 12px rgba(156, 110, 249, 0.4) !important;
+        font-weight: 600 !important;
+    }
+
+    /* Hover-effekt */
+    [data-testid="stRadio"] label:hover:not(:has(input:checked)) {
+        background-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    [data-testid="stRadio"] label:hover:not(:has(input:checked)) p {
+        color: #FFFFFF !important;
     }
 
     /* Vit bakgrund på bottenkontrollern i chattläget */
@@ -194,7 +223,7 @@ st.markdown("""
         background-color: rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Onboarding 1-kolumns kort-styling */
+    /* Onboarding-kort (1-kolumn) */
     .onboarding-card {
         background-color: rgba(255, 255, 255, 0.1) !important;
         border-radius: 20px !important;
@@ -280,13 +309,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. Controlled Segment HÖGST UPP
-if hasattr(st, "segmented_control"):
-    selected_page = st.segmented_control("", ["Chatt", "Onboarding"], default="Chatt")
-else:
-    selected_page = st.radio("", ["Chatt", "Onboarding"], horizontal=True, label_visibility="collapsed")
+# 1. NAVBAR HÖGST UPP PÅ SIDAN
+selected_page = st.radio(
+    "",
+    ["Chatt", "Onboarding"],
+    horizontal=True,
+    label_visibility="collapsed"
+)
 
-# 2. Logotypen NEDANFÖR segmenterade reglaget
+# 2. LOGOTYPEN UNDER NAVBAR
 if os.path.exists("logo.png"):
     st.markdown('''
         <div class="logo-container">
@@ -361,7 +392,7 @@ if selected_page == "Chatt":
 
         st.session_state.messages.append({"role": "assistant", "content": bot_response})
 
-# --- SIDA 2: ONBOARDING (RENA 1-KOLUMNSKORT) ---
+# --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
     st.markdown('''
         <div class="onboarding-card">
@@ -404,6 +435,6 @@ elif selected_page == "Onboarding":
         <div class="onboarding-card">
             <h3>📖 Fullständig Användardokumentation</h3>
             <p>För mer ingående instruktioner, vanliga frågor och detaljerade guider om samtliga funktioner i Paxly, se vår fullständiga dokumentation:</p>
-            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a></p>
+            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a>[span_0](start_span)[span_0](end_span)</p>
         </div>
     ''', unsafe_allow_html=True)
