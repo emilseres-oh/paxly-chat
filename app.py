@@ -93,7 +93,7 @@ st.markdown("""
         display: inline-block;
     }
 
-    /* AKTIV FLIK (Behåller bakgrund och fetare stil, men behåller den vita färgen utan underline) */
+    /* AKTIV FLIK */
     .paxly-nav-active,
     .paxly-nav-active:hover,
     .paxly-nav-active:visited,
@@ -107,11 +107,14 @@ st.markdown("""
         text-decoration: none !important;
     }
 
-    /* Vit bakgrund på bottenkontrollern i chattläget */
+    /* GLASUTSEENDE PÅ BOTTENPANELEN ISTÄLLET FÖR HELVIT */
     .st-emotion-cache-6shykm,
     [data-testid="stBottom"],
     [data-testid="stBottom"] > div {
-        background-color: #FFFFFF !important;
+        background-color: rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
         padding-top: 1rem !important;
         padding-bottom: 1rem !important;
         display: flex !important;
