@@ -58,17 +58,19 @@ st.markdown("""
         justify-content: center !important;
     }
 
-    /* Animationer */
+    /* Keyframes för mjuk slide-in av inmatningsfältet nedifrån */
     @keyframes slideUpInput {
         0% { transform: translateY(40px); opacity: 0; }
         100% { transform: translateY(0); opacity: 1; }
     }
 
+    /* Keyframes för mjuk scaling/zoom av logotypen vid laddning */
     @keyframes popScale {
         0% { transform: scale(0.85); opacity: 0; }
         100% { transform: scale(1); opacity: 1; }
     }
 
+    /* Bubblig pop-in animation från mitten */
     @keyframes popInCenter {
         0% { transform: scale(0.85); opacity: 0; }
         60% { transform: scale(1.02); opacity: 1; }
@@ -109,7 +111,7 @@ st.markdown("""
         }
     }
 
-    /* Loader */
+    /* Loader för inläsning */
     .custom-loader {
         display: flex !important;
         align-items: center !important;
@@ -117,7 +119,7 @@ st.markdown("""
         color: #FFFFFF !important;
         font-size: 18px !important;
         line-height: 1 !important;
-        margin: 0 !important;
+        margin-top: -18px !important;
         padding: 0 !important;
     }
     .custom-spinner {
@@ -136,50 +138,31 @@ st.markdown("""
         100% { transform: rotate(360deg); }
     }
 
-    /* Textfärg & typografi */
-    p, .stChatMessage p, .ai-bubble-content, .ai-bubble-content * {
+    /* Vit textfärg på alla p-element */
+    p, .stChatMessage p {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-size: 18px !important;
-        margin: 0 !important;
     }
 
     [data-testid="stChatMessageContainer"] {
         gap: 0.4rem !important;
     }
 
-    /* Tvinga vertikal centrering av allt innehåll inuti chattbubblorna */
-    [data-testid="stChatMessage"],
-    [data-testid="stChatMessage"] > div {
-        display: flex !important;
-        align-items: center !important;
-    }
-
-    /* Användarens meddelanderuta: 0.05 opacitet */
-    [data-testid="stChatMessage"] {
+    /* Grundstyling för meddelandebubblorna:
+       Användarens meddelanden (alla jämna i ordningen) = 0.05 opacitet */
+    .stChatMessage {
         background-color: rgba(255, 255, 255, 0.05) !important;
         border-radius: 16px !important;
-        padding: 20px 28px !important;
+        padding: 24px 32px !important;
         margin-bottom: 8px !important;
         animation: popInCenter 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
         transform-origin: center center !important;
     }
 
-    /* AI-meddelanderuta: 0.15 opacitet */
-    [data-testid="stChatMessage"]:has(.ai-bubble-content) {
+    /* AI-assistentens meddelanden (alla udda i ordningen) = 0.15 opacitet */
+    [data-testid="stChatMessageContainer"] > div:nth-child(even) .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
-        padding: 20px 28px !important;
-        margin-bottom: 8px !important;
-    }
-
-    /* Vertikalt centrerad AI-text behållare */
-    .ai-bubble-content {
-        color: #FFFFFF !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        width: 100% !important;
     }
 
     .stChatInputContainer,
@@ -274,13 +257,11 @@ AI_AVATAR = f"data:image/png;base64,{ai_b64}" if ai_b64 else "🤖"
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Ren återgivning utan omslutande extra element
 for message in st.session_state.messages:
     avatar = USER_AVATAR if message["role"] == "user" else AI_AVATAR
     with st.chat_message(message["role"], avatar=avatar):
-        if message["role"] == "assistant":
-            st.markdown(f'<div class="ai-bubble-content">{message["content"]}</div>', unsafe_allow_html=True)
-        else:
-            st.markdown(message["content"])
+        st.markdown(message["content"])
 
 if prompt := st.chat_input("Skriv din fråga här..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -292,7 +273,7 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     with st.chat_message("assistant", avatar=AI_AVATAR):
         loader_placeholder = st.empty()
         loader_placeholder.markdown('''
-            <div class="ai-bubble-content custom-loader">
+            <div class="custom-loader">
                 <div class="custom-spinner"></div>
                 <span>Hämtar information...</span>
             </div>
@@ -315,6 +296,6 @@ if prompt := st.chat_input("Skriv din fråga här..."):
                 bot_response = f"Det var som tusan Eva, nu spökar det i servrarna! (Fel: {e})"
 
         loader_placeholder.empty()
-        st.markdown(f'<div class="ai-bubble-content">{bot_response}</div>', unsafe_allow_html=True)
+        st.markdown(bot_response)
 
     st.session_state.messages.append({"role": "assistant", "content": bot_response})
