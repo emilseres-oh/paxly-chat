@@ -100,14 +100,14 @@ st.markdown("""
         100% { transform: scale(1); opacity: 1; }
     }
 
-    /* LOGOTYP-CONTAINER MED ANIMATION */
+    /* LOGOTYP-CONTAINER MED EXTRA AVSTÅND NEDÅT */
     .logo-container {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
         height: 90px;
-        margin-bottom: 25px !important;
+        margin-bottom: 50px !important; /* Ökat från 25px till 50px */
         margin-top: 10px;
         animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
@@ -120,6 +120,7 @@ st.markdown("""
     @media (max-width: 768px) {
         .logo-container {
             height: 60px;
+            margin-bottom: 35px !important;
         }
         .logo-container img {
             width: 200px !important;
@@ -204,6 +205,7 @@ st.markdown("""
 
     [data-testid="stChatMessageContainer"] {
         gap: 0.4rem !important;
+        margin-top: 15px !important; /* Extra marginal ovanför första meddelandet */
     }
 
     /* GLAS-KÄNSLA PÅ CHATTMEDDELANDEN MED ANIMATION */
