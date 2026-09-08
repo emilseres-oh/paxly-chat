@@ -76,17 +76,6 @@ st.markdown(bg_css + """
         }
     }
 
-    /* Förstora avatarelementen (ikonerna) */
-    [data-testid="stChatMessageAvatar"],
-    [data-testid="stChatMessageAvatar"] img,
-    .stChatMessageAvatar,
-    .stChatMessageAvatar img {
-        width: 38px !important;
-        height: 38px !important;
-        max-width: 38px !important;
-        max-height: 38px !important;
-    }
-
     /* Vit text samt 18px teckenstorlek i chatten */
     p, .stChatMessage p {
         color: #FFFFFF !important;
@@ -105,7 +94,6 @@ st.markdown(bg_css + """
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
-        align-items: center !important;
     }
 
     /* Yttre behållare - 2px border */
