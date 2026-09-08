@@ -1,4 +1,5 @@
 import os
+import time
 import base64
 import streamlit as st
 from google import genai
@@ -216,15 +217,32 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     with st.chat_message("user", avatar=USER_AVATAR):
         st.markdown(prompt)
 
-    try:
-        response = client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=prompt,
-            config={"system_instruction": SYSTEM_INSTRUCTION}
-        )
-        bot_response = response.text
-    except Exception as e:
-        bot_response = f"Ett fel uppstod vid kontakt med AI-tjänsten: {e}"
+    bot_response = None
+
+    # Försök först med primärmodellen gemini-3.6-flash upp till 2 gånger
+    for attempt in range(2):
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.6-flash",
+                contents=prompt,
+                config={"system_instruction": SYSTEM_INSTRUCTION}
+            )
+            bot_response = response.text
+            break
+        except Exception:
+            time.sleep(1)
+
+    # Om primärmodellen inte svarade, kör reservmodellen gemini-2.5-flash
+    if not bot_response:
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config={"system_instruction": SYSTEM_INSTRUCTION}
+            )
+            bot_response = response.text
+        except Exception:
+            bot_response = "Det var som tusan Eva, nu spökar det i servrarna! Pröva igen om ett ögonblick."
 
     with st.chat_message("assistant", avatar=AI_AVATAR):
         st.markdown(bot_response)
