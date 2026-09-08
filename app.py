@@ -14,16 +14,26 @@ def get_base64_image(image_path):
 
 bg_base64 = get_base64_image("bg.jpg")
 
+# Sätt bakgrundsfärgen på HTML/Body-nivå omedelbart så att sidan aldrig blir vit vid laddning
+st.markdown("""
+    <style>
+    /* Lås bakgrunden omedelbart på rot-nivå */
+    html, body, [data-testid="stAppViewContainer"], .stApp {
+        background-color: #080d42 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 if bg_base64:
     bg_css = f"""
     <style>
     .stApp {{
         background: linear-gradient(rgba(8, 13, 66, 0.8), rgba(8, 13, 66, 0.8)), 
-                    url("data:image/jpeg;base64,{bg_base64}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+                    url("data:image/jpeg;base64,{bg_base64}") !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        background-attachment: fixed !important;
         color: #FFFFFF;
     }}
     </style>
@@ -32,7 +42,7 @@ else:
     bg_css = """
     <style>
     .stApp {
-        background-color: rgba(8, 13, 66, 0.8);
+        background-color: rgba(8, 13, 66, 0.8) !important;
         color: #FFFFFF;
     }
     </style>
