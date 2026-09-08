@@ -42,54 +42,68 @@ st.markdown(bg_css + """
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Logotypens storlek och avstånd */
+    /* Logotypens storlek (max 300px) och ökat avstånd nedåt */
     .logo-container {
         display: flex;
         justify-content: center;
-        margin-bottom: 60px;
+        margin-bottom: 80px !important;
         margin-top: 20px;
     }
     .logo-container img {
-        max-width: 200px !important;
+        max-width: 300px !important;
         height: auto;
     }
 
-    /* Vit text i allmänhet samt i meddelanderutorna */
+    /* Vit text samt 18px teckenstorlek */
     p, .stChatMessage p {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
+        font-size: 18px !important;
+    }
+
+    /* Minska avstånd mellan meddelanderutorna */
+    [data-testid="stChatMessageContainer"] {
+        gap: 0.4rem !important;
     }
 
     /* Meddelanderutor med border-radius 16px */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
-        padding: 12px 24px !important;
-        margin-bottom: 15px !important;
+        padding: 10px 20px !important;
+        margin-bottom: 6px !important;
     }
 
     /* Input-fältets behållare */
     .stChatInputContainer {
-        border-radius: 16px !important;
+        border-radius: 24px !important;
         background-color: #FFFFFF !important;
+        padding: 6px 12px !important;
     }
 
-    /* Svart text enbart inne i input-fältet med genomskinlig bakgrund */
+    /* Svart text, vertikalt centrerad och större höjd */
     .stChatInputContainer textarea,
     .stChatInputContainer p,
     .stChatInputContainer span,
     [data-testid="stChatInput"] textarea {
         color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
-        border-radius: 16px !important;
+        font-size: 18px !important;
+        border-radius: 24px !important;
         background-color: transparent !important;
         background: transparent !important;
+        min-height: 48px !important;
+        line-height: 48px !important;
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
     }
 
-    /* Placeholder-text */
+    /* Placeholder-text vertikalt centrerad */
     .stChatInputContainer textarea::placeholder {
         color: #666666 !important;
         -webkit-text-fill-color: #666666 !important;
+        font-size: 18px !important;
+        line-height: 48px !important;
     }
 
     /* Aktiv ram när man klickar i fältet */
