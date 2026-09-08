@@ -1,4 +1,5 @@
 import os
+import time
 import base64
 import streamlit as st
 from google import genai
@@ -216,16 +217,24 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     with st.chat_message("user", avatar=USER_AVATAR):
         st.markdown(prompt)
 
-    try:
-        response = client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=prompt,
-            config={"system_instruction": SYSTEM_INSTRUCTION}
-        )
-        bot_response = response.text
-    except Exception as e:
-        bot_response = f"Ett fel uppstod vid kontakt med AI-tjänsten: {e}"
-
+    bot_response = ""
+    max_retries = 3
+    
     with st.chat_message("assistant", avatar=AI_AVATAR):
-        st.markdown(bot_response)
+        for attempt in range(max_retries):
+            try:
+                response = client.models.generate_content_stream(
+                    model="gemini-2.5-flash",
+                    contents=prompt,
+                    config={"system_instruction": SYSTEM_INSTRUCTION}
+                )
+                bot_response = st.write_stream(chunk.text for chunk in response)
+                break  # Lyckades, bryt loopen
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    time.sleep(1.5)  # Vänta 1.5 sekunder innan nästa försök
+                else:
+                    bot_response = "Just nu är belastningen hög hos AI-tjänsten. Vänligen försök igen om ett ögonblick eller kontakta support@paxly.se!"
+                    st.markdown(bot_response)
+
     st.session_state.messages.append({"role": "assistant", "content": bot_response})
