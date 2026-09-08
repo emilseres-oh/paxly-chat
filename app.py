@@ -38,7 +38,10 @@ else:
     </style>
     """
 
-st.markdown(bg_css + """
+st.markdown(bg_css, unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
@@ -241,9 +244,8 @@ if prompt := st.chat_input("Skriv din fråga här..."):
             </div>
         ''', unsafe_allow_html=True)
 
-        # Testa modellerna i ordning och skriv ut EXAKT fel om alla misslyckas
         errors = []
-        for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-1.5-flash"]:
+        for model_name in ["gemini-3.6-flash", "gemini-2.5-flash"]:
             try:
                 response = client.models.generate_content(
                     model=model_name,
