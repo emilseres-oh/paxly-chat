@@ -6,7 +6,6 @@ from google import genai
 
 st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
-# Läs in bild och konvertera till base64
 def get_base64_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
@@ -27,6 +26,7 @@ if bg_base64:
         background-attachment: fixed;
         color: #FFFFFF;
     }}
+    </style>
     """
 else:
     bg_css = """
@@ -35,15 +35,14 @@ else:
         background-color: rgba(8, 13, 66, 0.8);
         color: #FFFFFF;
     }
+    </style>
     """
 
 st.markdown(bg_css + """
-    /* Dölj menykontroller */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Vit bakgrund på botten med vertikal centrering */
     .st-emotion-cache-6shykm,
     [data-testid="stBottom"],
     [data-testid="stBottom"] > div {
@@ -55,7 +54,6 @@ st.markdown(bg_css + """
         justify-content: center !important;
     }
 
-    /* Centrerad logotyp - 300px på desktop, skalar ner automatiskt på mobil */
     .logo-container {
         display: flex;
         justify-content: center;
@@ -77,7 +75,6 @@ st.markdown(bg_css + """
         }
     }
 
-    /* CSS för vertikalt centrerad vit spinner och text */
     .custom-loader {
         display: flex !important;
         align-items: center !important;
@@ -104,19 +101,16 @@ st.markdown(bg_css + """
         100% { transform: rotate(360deg); }
     }
 
-    /* Vit text samt 18px teckenstorlek i chatten */
     p, .stChatMessage p {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-size: 18px !important;
     }
 
-    /* Minska avstånd mellan meddelanderutorna */
     [data-testid="stChatMessageContainer"] {
         gap: 0.4rem !important;
     }
 
-    /* Meddelanderutor */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
@@ -124,7 +118,6 @@ st.markdown(bg_css + """
         margin-bottom: 8px !important;
     }
 
-    /* Yttre behållare - 2px border */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
         border-radius: 24px !important;
@@ -135,7 +128,6 @@ st.markdown(bg_css + """
         align-items: center !important;
     }
 
-    /* Inre behållare rensad från border */
     .stChatInputContainer,
     .stChatInputContainer > div,
     [data-testid="stChatInput"] > div {
@@ -148,7 +140,6 @@ st.markdown(bg_css + """
         width: 100% !important;
     }
 
-    /* Svart text, vertikalt centrerad */
     .stChatInputContainer textarea,
     .stChatInputContainer p,
     .stChatInputContainer span,
@@ -167,7 +158,6 @@ st.markdown(bg_css + """
         margin: 0 !important;
     }
 
-    /* Placeholder-text */
     .stChatInputContainer textarea::placeholder {
         color: #666666 !important;
         -webkit-text-fill-color: #666666 !important;
@@ -175,13 +165,11 @@ st.markdown(bg_css + """
         line-height: 48px !important;
     }
 
-    /* Skugga vid klick/fokus */
     [data-testid="stChatInput"]:focus-within {
         border: 2px solid #9C6EF9 !important;
         box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
     }
 
-    /* Skickaknappen */
     [data-testid="stChatInputSubmitButton"] button,
     [data-testid="stChatInput"] button {
         background-color: #9C6EF9 !important;
@@ -202,7 +190,6 @@ st.markdown(bg_css + """
     </style>
 """, unsafe_allow_html=True)
 
-# Visa logotypen direkt
 if os.path.exists("logo.png"):
     st.markdown('''
         <div class="logo-container">
@@ -224,7 +211,6 @@ Svara alltid på svenska. Användaren heter Eva. Du säger grejer som: "Det undr
 Lägg gärna in något drygt men roligt skämt i dina svar. Svara kortfattat.
 """
 
-# Konvertera bildikoner till Data URI för garanterad visning
 human_b64 = get_base64_image("human.png")
 ai_b64 = get_base64_image("ai.png")
 
@@ -255,28 +241,22 @@ if prompt := st.chat_input("Skriv din fråga här..."):
             </div>
         ''', unsafe_allow_html=True)
 
-        # Förstahandsval: gemini-2.5-flash för snabb responstid
-        try:
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt,
-                config={"system_instruction": SYSTEM_INSTRUCTION}
-            )
-            bot_response = response.text
-        except Exception:
-            pass
-
-        # Reservmodell: gemini-3.6-flash om förstahandsvalet misslyckas
-        if not bot_response:
+        # Testa modellerna i ordning och skriv ut EXAKT fel om alla misslyckas
+        errors = []
+        for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-1.5-flash"]:
             try:
                 response = client.models.generate_content(
-                    model="gemini-3.6-flash",
+                    model=model_name,
                     contents=prompt,
                     config={"system_instruction": SYSTEM_INSTRUCTION}
                 )
                 bot_response = response.text
-            except Exception:
-                bot_response = "Det var som tusan Eva, nu spökar det i servrarna! Pröva igen om ett ögonblick."
+                break
+            except Exception as e:
+                errors.append(f"{model_name}: {str(e)}")
+
+        if not bot_response:
+            bot_response = "Kunde inte ansluta till någon modell. Detaljer: " + " | ".join(errors)
 
         loader_placeholder.empty()
         st.markdown(bot_response)
