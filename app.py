@@ -46,7 +46,7 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Styling för Segmented Control (Växlare) överst */
+    /* Centrera Segmented Control högst upp */
     [data-testid="stSegmentedControl"], div[role="radiogroup"] {
         display: flex !important;
         justify-content: center !important;
@@ -54,8 +54,8 @@ st.markdown("""
         padding: 6px !important;
         border-radius: 30px !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        margin: 0 auto 30px auto !important;
-        max-width: 320px !important;
+        margin: 10px auto 20px auto !important;
+        max-width: 300px !important;
     }
 
     [data-testid="stSegmentedControl"] button, div[role="radiogroup"] label {
@@ -125,7 +125,7 @@ st.markdown("""
         align-items: center;
         width: 100%;
         margin-bottom: 25px !important;
-        margin-top: 10px;
+        margin-top: 5px;
         animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
     .logo-container img {
@@ -194,13 +194,14 @@ st.markdown("""
         background-color: rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Onboarding-kort styling */
+    /* Onboarding 1-kolumns kort-styling */
     .onboarding-card {
         background-color: rgba(255, 255, 255, 0.1) !important;
         border-radius: 20px !important;
         padding: 28px !important;
-        margin-bottom: 24px !important;
+        margin-bottom: 20px !important;
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        width: 100% !important;
     }
     .onboarding-card h2 {
         color: #9C6EF9 !important;
@@ -279,19 +280,19 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Visa logotypen överst
+# 1. Controlled Segment HÖGST UPP
+if hasattr(st, "segmented_control"):
+    selected_page = st.segmented_control("", ["Chatt", "Onboarding"], default="Chatt")
+else:
+    selected_page = st.radio("", ["Chatt", "Onboarding"], horizontal=True, label_visibility="collapsed")
+
+# 2. Logotypen NEDANFÖR segmenterade reglaget
 if os.path.exists("logo.png"):
     st.markdown('''
         <div class="logo-container">
             <img src="data:image/png;base64,{}" alt="Paxly Logo">
         </div>
     '''.format(get_base64_image("logo.png")), unsafe_allow_html=True)
-
-# Controlled segment (Flipväljare överst)
-if hasattr(st, "segmented_control"):
-    selected_page = st.segmented_control("", ["Chatt", "Onboarding"], default="Chatt")
-else:
-    selected_page = st.radio("", ["Chatt", "Onboarding"], horizontal=True, label_visibility="collapsed")
 
 # --- SIDA 1: CHATT ---
 if selected_page == "Chatt":
@@ -360,51 +361,49 @@ if selected_page == "Chatt":
 
         st.session_state.messages.append({"role": "assistant", "content": bot_response})
 
-# --- SIDA 2: ONBOARDING ---
+# --- SIDA 2: ONBOARDING (RENA 1-KOLUMNSKORT) ---
 elif selected_page == "Onboarding":
     st.markdown('''
         <div class="onboarding-card">
             <h2>🚀 Välkommen till Paxly Onboarding</h2>
-            <p>Här hittar du allt du behöver för att komma igång med ditt smarta bokningssystem. Följ stegen nedan för att konfigurera dina första resurser och ta emot bokningar.</p>
+            <p>Här hittar du allt du behöver för att komma igång med ditt smarta bokningssystem. Följ guiden nedan för att konfigurera dina resurser och ta emot dina första bokningar.</p>
         </div>
     ''', unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
+    st.markdown('''
+        <div class="onboarding-card">
+            <h3>1. Registrera dina Resurser</h3>
+            <p>En resurs kan vara vad som helst som är bokningsbart – allt från mötesrum och fordon till rådgivare och utrustning.</p>
+            <ul>
+                <li>Ställ in maxkapacitet och lokaltyp</li>
+                <li>Bestäm ställtid och bufferttid mellan bokningar</li>
+                <li>Länka direkt till extern kalendersynkning (Outlook / Google Calendar)</li>
+            </ul>
+        </div>
+    ''', unsafe_allow_html=True)
 
-    with col1:
-        st.markdown('''
-            <div class="onboarding-card">
-                <h3>1. Registrera Resurser</h3>
-                <p>En resurs kan vara vad som helst – allt från mötesrum och fordon till rådgivare och utrustning.</p>
-                <ul>
-                    <li>Ställ in maxkapacitet</li>
-                    <li>Bestäm ställtid och bufferttid</li>
-                    <li>Länk till extern kalendersynkning</li>
-                </ul>
-            </div>
-        ''', unsafe_allow_html=True)
-        if os.path.exists("logo.png"):
-            st.image("logo.png", caption="Paxly Resource Engine", use_container_width=True)
-
-    with col2:
-        st.markdown('''
-            <div class="onboarding-card">
-                <h3>2. Hantera Bokningar</h3>
-                <p>Användarna kan boka direct via din kundanpassade portal eller via widgeten på din hemsida.</p>
-                <ul>
-                    <li>Automatisk bekräftelse via e-post</li>
-                    <li>Inbyggd påminnelelse 24h innan</li>
-                    <li>Smidig avbokningshantering</li>
-                </ul>
-            </div>
-        ''', unsafe_allow_html=True)
-        if os.path.exists("bg.jpg"):
-            st.image("bg.jpg", caption="Paxly Bokningsvy", use_container_width=True)
+    if os.path.exists("logo.png"):
+        st.image("logo.png", caption="Paxly Resource Engine", use_container_width=True)
 
     st.markdown('''
         <div class="onboarding-card">
-            <h3>📖 Dokumentation & Guider</h3>
-            <p>För mer ingående instruktioner och detaljerade guider om alla funktioner, se den fullständiga dokumentationen:</p>
+            <h3>2. Hantera och Automatisera Bokningar</h3>
+            <p>Användarna kan boka direkt via er kundanpassade portal eller via den inbäddade widgeten på er hemsida.</p>
+            <ul>
+                <li>Automatisk bokningsbekräftelse skickas direkt via e-post</li>
+                <li>Inbyggda påminnelser 24 timmar innan bokad tid</li>
+                <li>Smidiga avbokningsregler och kundanpassad schemaläggning</li>
+            </ul>
+        </div>
+    ''', unsafe_allow_html=True)
+
+    if os.path.exists("bg.jpg"):
+        st.image("bg.jpg", caption="Paxly Bokningsvy", use_container_width=True)
+
+    st.markdown('''
+        <div class="onboarding-card">
+            <h3>📖 Fullständig Användardokumentation</h3>
+            <p>För mer ingående instruktioner, vanliga frågor och detaljerade guider om samtliga funktioner i Paxly, se vår fullständiga dokumentation:</p>
             <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a></p>
         </div>
     ''', unsafe_allow_html=True)
