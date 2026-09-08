@@ -75,22 +75,18 @@ st.markdown("""
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* Tvinga bort radio-pricken/cirkeln fullständigt */
-    [data-testid="stRadio"] label > div,
-    [data-testid="stRadio"] label svg,
-    [data-testid="stRadio"] label input,
-    [data-testid="stRadio"] label ::before,
-    [data-testid="stRadio"] label ::after {
-        display: none !important;
-        visibility: hidden !important;
+    /* Dölj enbart själva cirkeln/radiopunkten */
+    [data-testid="stRadio"] label [data-testid="stMarkdownContainer"] ~ div,
+    [data-testid="stRadio"] label > div:first-child,
+    [data-testid="stRadio"] label input[type="radio"] {
+        position: absolute !important;
         opacity: 0 !important;
         width: 0 !important;
         height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
+        pointer-events: none !important;
     }
 
-    /* Styling för de rena knapparna */
+    /* Tvinga knapparna att visas som kapslar */
     [data-testid="stRadio"] label {
         padding: 8px 24px !important;
         border-radius: 30px !important;
@@ -100,13 +96,19 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        position: relative !important;
     }
 
-    [data-testid="stRadio"] label p {
+    /* Tvinga texten att alltid vara synlig och vit */
+    [data-testid="stRadio"] label p,
+    [data-testid="stRadio"] label span {
         color: rgba(255, 255, 255, 0.8) !important;
         font-size: 15px !important;
         font-weight: 500 !important;
         margin: 0 !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
     /* Aktiv flik */
@@ -115,7 +117,8 @@ st.markdown("""
         box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5) !important;
     }
 
-    [data-testid="stRadio"] label:has(input:checked) p {
+    [data-testid="stRadio"] label:has(input:checked) p,
+    [data-testid="stRadio"] label:has(input:checked) span {
         color: #FFFFFF !important;
         font-weight: 600 !important;
     }
@@ -400,10 +403,10 @@ if selected_page == "Chatt":
                 else:
                     bot_response = f"Det var som tusan Eva, nu spökar det i servrarna! (Fel: {e})"
 
-            loader_placeholder.empty()
-            st.markdown(bot_response)
+        loader_placeholder.empty()
+        st.markdown(bot_response)
 
-        st.session_state.messages.append({"role": "assistant", "content": bot_response})
+    st.session_state.messages.append({"role": "assistant", "content": bot_response})
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
@@ -448,6 +451,6 @@ elif selected_page == "Onboarding":
         <div class="onboarding-card">
             <h3>📖 Fullständig Användardokumentation</h3>
             <p>För mer ingående instruktioner, vanliga frågor och detaljerade guider om samtliga funktioner i Paxly, se vår fullständiga dokumentation:</p>
-            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a>[span_1](start_span)[span_1](end_span)</p>
+            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a>[span_0](start_span)[span_0](end_span)</p>
         </div>
     ''', unsafe_allow_html=True)
