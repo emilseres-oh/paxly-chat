@@ -46,8 +46,8 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Lås sidskrollningens startposition för att förhindra hopp vid sidbyte */
-    html {
+    /* Förhindra automatiska skrollhopp vid sidbyte */
+    html, body, .stAppContainer, .stApp {
         scroll-behavior: auto !important;
     }
 
@@ -80,12 +80,22 @@ st.markdown("""
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     }
 
-    /* DÖLJ CIRKELN/PUNKTEN HELT PÅ ETT SÄKERT SÄTT */
-    [data-testid="stRadio"] label > div:first-child {
+    /* EXAKT OCH ABSOLUT BORTTAGNING AV RADIO-CIRKELN */
+    [data-testid="stRadio"] div[role="radiogroup"] label > div:first-child,
+    [data-testid="stRadio"] div[data-baseweb="radio"] > div:first-child,
+    [data-testid="stRadio"] label > div:not([data-testid="stMarkdownContainer"]) {
         display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
     }
 
-    /* Kapselformade renodlade knappar */
+    /* Kapselformade knappar */
     [data-testid="stRadio"] label {
         padding: 8px 24px !important;
         border-radius: 30px !important;
