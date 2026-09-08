@@ -77,7 +77,7 @@ st.markdown(bg_css + """
         }
     }
 
-    /* CSS för perfekt vertikalt centrerad vit spinner och text */
+    /* CSS för vertikalt centrerad vit spinner och text */
     .custom-loader {
         display: flex !important;
         align-items: center !important;
@@ -85,8 +85,7 @@ st.markdown(bg_css + """
         color: #FFFFFF !important;
         font-size: 18px !important;
         line-height: 1 !important;
-        margin: 0 !important;
-        padding: 0 !important;
+        margin-top: -3px !important;
     }
     .custom-spinner {
         width: 20px !important;
@@ -109,7 +108,6 @@ st.markdown(bg_css + """
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-size: 18px !important;
-        margin: 0 !important;
     }
 
     /* Minska avstånd mellan meddelanderutorna */
@@ -117,19 +115,12 @@ st.markdown(bg_css + """
         gap: 0.4rem !important;
     }
 
-    /* Meddelanderutor - Strikt flexbox för perfekt vertikal centrering av allt innehåll */
+    /* Meddelanderutor */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
-        display: flex !important;
-        align-items: center !important;
-    }
-
-    .stChatMessage > div {
-        display: flex !important;
-        align-items: center !important;
     }
 
     /* Yttre behållare - 2px border */
