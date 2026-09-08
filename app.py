@@ -77,17 +77,25 @@ st.markdown(bg_css + """
         }
     }
 
-    /* Gör Hela spinner-komponenten helt vit */
-    [data-testid="stSpinner"],
-    [data-testid="stSpinner"] * {
+    /* CSS för egen, garanterat fungerande vit spinner */
+    .custom-loader {
+        display: flex;
+        align-items: center;
+        gap: 12px;
         color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
-        stroke: #FFFFFF !important;
-        fill: #FFFFFF !important;
-        border-color: #FFFFFF !important;
+        font-size: 18px;
     }
-    .stSpinner > div {
-        border-top-color: #FFFFFF !important;
+    .custom-spinner {
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #FFFFFF;
+        animation: spin-loader 0.8s linear infinite;
+    }
+    @keyframes spin-loader {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 
     /* Vit text samt 18px teckenstorlek i chatten */
@@ -233,32 +241,42 @@ if prompt := st.chat_input("Skriv din fråga här..."):
     bot_response = None
 
     with st.chat_message("assistant", avatar=AI_AVATAR):
-        with st.spinner("Hämtar information..."):
-            # Försök först med primärmodellen gemini-3.6-flash upp till 2 gånger
-            for attempt in range(2):
-                try:
-                    response = client.models.generate_content(
-                        model="gemini-3.6-flash",
-                        contents=prompt,
-                        config={"system_instruction": SYSTEM_INSTRUCTION}
-                    )
-                    bot_response = response.text
-                    break
-                except Exception:
-                    time.sleep(1)
+        # Skapa en tom ruta för laddningsanimationen
+        loader_placeholder = st.empty()
+        loader_placeholder.markdown('''
+            <div class="custom-loader">
+                <div class="custom-spinner"></div>
+                <span>Hämtar information...</span>
+            </div>
+        ''', unsafe_allow_html=True)
 
-            # Om primärmodellen inte svarade, kör reservmodellen gemini-2.5-flash
-            if not bot_response:
-                try:
-                    response = client.models.generate_content(
-                        model="gemini-2.5-flash",
-                        contents=prompt,
-                        config={"system_instruction": SYSTEM_INSTRUCTION}
-                    )
-                    bot_response = response.text
-                except Exception:
-                    bot_response = "Det var som tusan Eva, nu spökar det i servrarna! Pröva igen om ett ögonblick."
+        # Försök först med gemini-3.6-flash upp till 2 gånger
+        for attempt in range(2):
+            try:
+                response = client.models.generate_content(
+                    model="gemini-3.6-flash",
+                    contents=prompt,
+                    config={"system_instruction": SYSTEM_INSTRUCTION}
+                )
+                bot_response = response.text
+                break
+            except Exception:
+                time.sleep(1)
 
+        # Om gemini-3.6-flash har 503/hög belastning, använd gemini-2.5-flash som reserv
+        if not bot_response:
+            try:
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt,
+                    config={"system_instruction": SYSTEM_INSTRUCTION}
+                )
+                bot_response = response.text
+            except Exception:
+                bot_response = "Det var som tusan Eva, nu spökar det i servrarna! Pröva igen om ett ögonblick."
+
+        # Ta bort laddningsanimationen och skriv ut det riktiga svaret
+        loader_placeholder.empty()
         st.markdown(bot_response)
 
     st.session_state.messages.append({"role": "assistant", "content": bot_response})
