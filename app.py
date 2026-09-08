@@ -54,16 +54,19 @@ st.markdown(bg_css + """
         justify-content: center !important;
     }
 
-    /* Logotypens storlek (max 300px) och avstånd nedåt */
+    /* Centrerad logotyp med strikt maxbredd för mobil och desktop */
     .logo-container {
         display: flex;
         justify-content: center;
-        margin-bottom: 80px !important;
-        margin-top: 20px;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 40px !important;
+        margin-top: 10px;
     }
     .logo-container img {
-        max-width: 300px !important;
-        height: auto;
+        width: 200px !important;
+        max-width: 70% !important;
+        height: auto !important;
     }
 
     /* Vit text samt 18px teckenstorlek i chatten */
@@ -78,15 +81,15 @@ st.markdown(bg_css + """
         gap: 0.4rem !important;
     }
 
-    /* Meddelanderutor med ökad padding */
+    /* Meddelanderutor */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
-        padding: 16px 28px !important;
+        padding: 24px 32px !important;
         margin-bottom: 8px !important;
     }
 
-    /* Yttre behållare - alltid 2px border för att förhindra höjdförändring */
+    /* Yttre behållare - 2px border */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
         border-radius: 24px !important;
@@ -164,13 +167,13 @@ st.markdown(bg_css + """
     </style>
 """, unsafe_allow_html=True)
 
-# Visa logotypen
+# Visa logotypen direkt utan Streamlits responsive columns
 if os.path.exists("logo.png"):
-    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image("logo.png", use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('''
+        <div class="logo-container">
+            <img src="data:image/png;base64,{}" alt="Paxly Logo">
+        </div>
+    '''.format(base64.b64encode(open("logo.png", "rb").read()).decode()), unsafe_allow_html=True)
 
 api_key = os.environ.get("GEMINI_API_KEY")
 
