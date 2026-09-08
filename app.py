@@ -46,6 +46,19 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
+    /* Keyframes för mjuk slide-in nedifrån */
+    @keyframes slideUp {
+        0% {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Vit bakgrund på botten med vertikal centrering och animering vid sidladdning */
     .st-emotion-cache-6shykm,
     [data-testid="stBottom"],
     [data-testid="stBottom"] > div {
@@ -55,6 +68,7 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
 
     .logo-container {
