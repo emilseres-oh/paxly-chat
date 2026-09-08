@@ -77,7 +77,7 @@ st.markdown(bg_css + """
         }
     }
 
-    /* CSS för vertikalt centrerad vit spinner och text */
+    /* Justering för att placera custom-loader i exakt samma höjd som ett vanligt p-element */
     .custom-loader {
         display: flex !important;
         align-items: center !important;
@@ -85,7 +85,8 @@ st.markdown(bg_css + """
         color: #FFFFFF !important;
         font-size: 18px !important;
         line-height: 1 !important;
-        margin-top: -3px !important;
+        margin-top: -18px !important;
+        padding: 0 !important;
     }
     .custom-spinner {
         width: 20px !important;
