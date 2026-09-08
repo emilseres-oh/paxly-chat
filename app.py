@@ -136,7 +136,8 @@ st.markdown("""
         100% { transform: rotate(360deg); }
     }
 
-    p, .stChatMessage p {
+    /* Textfärg & typografi */
+    p, .stChatMessage p, .ai-bubble-content, .ai-bubble-content * {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-size: 18px !important;
@@ -146,9 +147,9 @@ st.markdown("""
         gap: 0.4rem !important;
     }
 
-    /* Grundinställning för användarens meddelanderuta (15% opacitet) */
+    /* Användarens meddelanderuta: 0.05 opacitet */
     [data-testid="stChatMessage"] {
-        background-color: rgba(255, 255, 255, 0.15) !important;
+        background-color: rgba(255, 255, 255, 0.05) !important;
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
@@ -156,9 +157,17 @@ st.markdown("""
         transform-origin: center center !important;
     }
 
-    /* Tvinga AI-meddelanden att få lägre opacitet (5% opacitet) via föräldraelementet */
+    /* AI-meddelanderuta: 0.15 opacitet */
     [data-testid="stChatMessage"]:has(.ai-bubble-content) {
-        background-color: rgba(255, 255, 255, 0.05) !important;
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        padding: 24px 32px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .ai-bubble-content {
+        color: #FFFFFF !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     .stChatInputContainer,
@@ -253,7 +262,6 @@ AI_AVATAR = f"data:image/png;base64,{ai_b64}" if ai_b64 else "🤖"
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Rendera historiken med unik wrapper på AI-svar
 for message in st.session_state.messages:
     avatar = USER_AVATAR if message["role"] == "user" else AI_AVATAR
     with st.chat_message(message["role"], avatar=avatar):
