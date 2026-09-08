@@ -46,7 +46,7 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Förhindra skrollhopp vid sidbyte */
+    /* Lås skrollning vid sidbyte för att undvika alla typer av hopp */
     html, body, .stAppContainer, .stApp {
         scroll-behavior: auto !important;
     }
@@ -55,55 +55,56 @@ st.markdown("""
         padding-top: 6rem !important;
     }
 
-    /* FIXERAD OCH CENTRERAD NAVBAR HÖGST UPP */
-    [data-testid="stSegmentedControl"] {
+    /* SKRÄDDARSYDD CENTRERAD NAVBAR-CONTAINER */
+    div[data-testid="stColumn"] {
+        padding: 0 !important;
+    }
+
+    /* Flytande capsule-behållare högst upp i mitten */
+    .custom-navbar-wrapper {
         position: fixed !important;
         top: 20px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         z-index: 999999 !important;
-        width: auto !important;
-        margin: 0 !important;
-    }
-
-    [data-testid="stSegmentedControl"] > div {
+        display: flex !important;
         background: rgba(255, 255, 255, 0.12) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        padding: 5px 8px !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        padding: 4px !important;
         border-radius: 40px !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-        display: flex !important;
         gap: 6px !important;
     }
 
-    /* Styling av knapparna i navbaren */
-    [data-testid="stSegmentedControl"] button {
+    /* Styling för Streamlit-knapparna inuti navbaren */
+    .custom-navbar-wrapper button {
         border: none !important;
         background: transparent !important;
+        color: rgba(255, 255, 255, 0.8) !important;
         padding: 8px 24px !important;
         border-radius: 30px !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-    }
-
-    [data-testid="stSegmentedControl"] button p {
-        color: rgba(255, 255, 255, 0.8) !important;
         font-size: 15px !important;
         font-weight: 500 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        width: 100% !important;
         margin: 0 !important;
     }
 
-    /* Aktiv knapp i navbaren */
-    [data-testid="stSegmentedControl"] button[aria-selected="true"] {
-        background-color: #9C6EF9 !important;
-        box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5) !important;
+    /* Hover-effekt på knappar */
+    .custom-navbar-wrapper button:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #FFFFFF !important;
     }
 
-    [data-testid="stSegmentedControl"] button[aria-selected="true"] p {
+    /* Aktiv knapps utseende */
+    .custom-navbar-wrapper .nav-active button {
+        background-color: #9C6EF9 !important;
         color: #FFFFFF !important;
         font-weight: 600 !important;
+        box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5) !important;
     }
 
     /* Logotyp container */
@@ -246,75 +247,59 @@ st.markdown("""
         color: #E0E0E0 !important;
     }
 
-    .stChatInputContainer,
-    .stChatInputContainer > div,
-    [data-testid="stChatInput"] > div {
-        border: none !important;
-        border-radius: 24px !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        display: flex !important;
-        align-items: center !important;
-        width: 100% !important;
-    }
-
     .stChatInputContainer textarea,
-    .stChatInputContainer p,
-    .stChatInputContainer span,
     [data-testid="stChatInput"] textarea {
         color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
         font-size: 18px !important;
-        border-radius: 24px !important;
-        background-color: transparent !important;
-        background: transparent !important;
-        border: none !important;
-        min-height: 48px !important;
-        line-height: 48px !important;
-        padding-top: 0px !important;
-        padding-bottom: 0px !important;
-        margin: 0 !important;
     }
 
-    .stChatInputContainer textarea::placeholder {
-        color: #666666 !important;
-        -webkit-text-fill-color: #666666 !important;
-        font-size: 18px !important;
-        line-height: 48px !important;
-    }
-
-    [data-testid="stChatInput"]:focus-within {
-        border: 2px solid #9C6EF9 !important;
-        box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
-    }
-
-    [data-testid="stChatInputSubmitButton"] button,
-    [data-testid="stChatInput"] button {
+    [data-testid="stChatInputSubmitButton"] button {
         background-color: #9C6EF9 !important;
         color: #FFFFFF !important;
         border: none !important;
     }
     
-    [data-testid="stChatInputSubmitButton"] button:hover,
-    [data-testid="stChatInput"] button:hover {
+    [data-testid="stChatInputSubmitButton"] button:hover {
         background-color: #8552f8 !important;
     }
 
-    [data-testid="stChatInputSubmitButton"] svg,
-    [data-testid="stChatInput"] svg {
+    [data-testid="stChatInputSubmitButton"] svg {
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 1. FIXERAD OCH CENTRERAD NAVBAR
-selected_page = st.segmented_control(
-    "",
-    ["Chatt", "Onboarding"],
-    default="Chatt",
-    label_visibility="collapsed"
-)
+# Läs in aktiv flik från Session State (standard = Chatt)
+if "selected_page" not in st.session_state:
+    st.session_state.selected_page = "Chatt"
+
+# 1. RIKTIG REN NAVBAR (Byggd med knapp-container)
+nav_container = st.container()
+with nav_container:
+    st.markdown('<div class="custom-navbar-wrapper">', unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    
+    with c1:
+        is_chatt = st.session_state.selected_page == "Chatt"
+        st.markdown(f'<div class="{"nav-active" if is_chatt else ""}">', unsafe_allow_html=True)
+        if st.button("Chatt", key="nav_btn_chatt"):
+            st.session_state.selected_page = "Chatt"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+    with c2:
+        is_onboarding = st.session_state.selected_page == "Onboarding"
+        st.markdown(f'<div class="{"nav-active" if is_onboarding else ""}">', unsafe_allow_html=True)
+        if st.button("Onboarding", key="nav_btn_onboarding"):
+            st.session_state.selected_page = "Onboarding"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+    st.markdown('</div>', unsafe_allow_html=True)
+
+selected_page = st.session_state.selected_page
 
 # 2. LOGOTYPEN UNDER NAVBAR
 if os.path.exists("logo.png"):
