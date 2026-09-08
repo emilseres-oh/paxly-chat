@@ -40,6 +40,12 @@ else:
 
 st.markdown(bg_css, unsafe_allow_html=True)
 
+# Tvinga Safari adressfält/flikrad att matcha mörkblå bakgrunden
+st.markdown("""
+    <meta name="theme-color" content="#080d42">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+""", unsafe_allow_html=True)
+
 st.markdown("""
     <!-- IMPORT GOOGLE FONT: QUICKSAND -->
     <style>
