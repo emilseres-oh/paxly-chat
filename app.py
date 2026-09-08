@@ -42,7 +42,7 @@ st.markdown(bg_css + """
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Logotypens storlek (max 300px) och ökat avstånd nedåt */
+    /* Logotypens storlek (max 300px) och avstånd nedåt */
     .logo-container {
         display: flex;
         justify-content: center;
@@ -74,12 +74,15 @@ st.markdown(bg_css + """
         margin-bottom: 6px !important;
     }
 
-    /* Input-fältets behållare & ram */
-    [data-testid="stChatInput"], .stChatInputContainer {
-        border-radius: 24px !important;
+    /* Ta bort den röda ramen helt från alla inre behållare */
+    [data-testid="stChatInput"],
+    [data-testid="stChatInput"] > div,
+    .stChatInputContainer,
+    .stChatInputContainer > div {
         border: 1px solid #9C6EF9 !important;
+        border-radius: 24px !important;
         background-color: #FFFFFF !important;
-        padding: 6px 12px !important;
+        box-shadow: none !important;
     }
 
     /* Svart text, vertikalt centrerad */
@@ -93,6 +96,7 @@ st.markdown(bg_css + """
         border-radius: 24px !important;
         background-color: transparent !important;
         background: transparent !important;
+        border: none !important;
         min-height: 48px !important;
         line-height: 48px !important;
         padding-top: 0px !important;
@@ -107,29 +111,31 @@ st.markdown(bg_css + """
         line-height: 48px !important;
     }
 
-    /* Tvinga bort röd ram vid klick/fokus */
-    .stChatInputContainer:focus-within,
+    /* Aktiv ram vid fokus (bort med rött, in med lila glow) */
     [data-testid="stChatInput"]:focus-within,
-    .stChatInputContainer:focus,
-    textarea:focus {
-        border-color: #9C6EF9 !important;
-        outline: none !important;
+    [data-testid="stChatInput"] > div:focus-within,
+    .stChatInputContainer:focus-within {
+        border: 2px solid #9C6EF9 !important;
         box-shadow: 0 0 8px rgba(156, 110, 249, 0.6) !important;
     }
 
-    /* Skickaknappen i inputfältet */
-    [data-testid="stChatInputSubmitButton"] button {
+    /* Skickaknappen i lila */
+    [data-testid="stChatInputSubmitButton"] button,
+    [data-testid="stChatInput"] button {
         background-color: #9C6EF9 !important;
         color: #FFFFFF !important;
         border: none !important;
     }
     
-    [data-testid="stChatInputSubmitButton"] button:hover {
+    [data-testid="stChatInputSubmitButton"] button:hover,
+    [data-testid="stChatInput"] button:hover {
         background-color: #8552f8 !important;
     }
 
-    [data-testid="stChatInputSubmitButton"] svg {
+    [data-testid="stChatInputSubmitButton"] svg,
+    [data-testid="stChatInput"] svg {
         fill: #FFFFFF !important;
+        color: #FFFFFF !important;
     }
     </style>
 """, unsafe_allow_html=True)
