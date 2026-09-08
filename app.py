@@ -82,6 +82,22 @@ st.markdown("""
         }
     }
 
+    /* Bubblig pop-in-animation för meddelanden med lätt studseffekt */
+    @keyframes popInBubble {
+        0% {
+            transform: scale(0.92) translateY(10px);
+            opacity: 0;
+        }
+        70% {
+            transform: scale(1.02) translateY(-2px);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+    }
+
     /* Animera enbart själva det vita fältet/inputboxen */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
@@ -153,11 +169,14 @@ st.markdown("""
         gap: 0.4rem !important;
     }
 
+    /* Meddelanderutor med den nya bubbliga pop-in-effekten */
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px !important;
         padding: 24px 32px !important;
         margin-bottom: 8px !important;
+        animation: popInBubble 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+        transform-origin: bottom left;
     }
 
     .stChatInputContainer,
