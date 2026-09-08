@@ -77,21 +77,26 @@ st.markdown(bg_css + """
         }
     }
 
-    /* CSS för egen, garanterat fungerande vit spinner */
+    /* CSS för perfekt vertikalt centrerad vit spinner och text */
     .custom-loader {
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
         color: #FFFFFF !important;
-        font-size: 18px;
+        font-size: 18px !important;
+        line-height: 1 !important;
+        margin-top: -8px !important;
     }
     .custom-spinner {
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        border-top-color: #FFFFFF;
-        animation: spin-loader 0.8s linear infinite;
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        border: 3px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 50% !important;
+        border-top-color: #FFFFFF !important;
+        animation: spin-loader 0.8s linear infinite !important;
+        box-sizing: border-box !important;
     }
     @keyframes spin-loader {
         0% { transform: rotate(0deg); }
