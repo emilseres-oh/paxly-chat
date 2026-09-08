@@ -41,7 +41,15 @@ else:
 st.markdown(bg_css, unsafe_allow_html=True)
 
 st.markdown("""
+    <!-- IMPORT GOOGLE FONT: QUICKSAND -->
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+    /* Global typografi */
+    html, body, [class*="css"], .stApp, p, span, div, h1, h2, h3, h4, h5, h6, a, button, input, textarea {
+        font-family: 'Quicksand', sans-serif !important;
+    }
+
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
@@ -87,6 +95,7 @@ st.markdown("""
         border-radius: 30px;
         font-size: 15px;
         font-weight: 500;
+        font-family: 'Quicksand', sans-serif !important;
         cursor: pointer;
         text-decoration: none !important;
         transition: all 0.2s ease;
@@ -193,6 +202,7 @@ st.markdown("""
         gap: 12px !important;
         color: #FFFFFF !important;
         font-size: 18px !important;
+        font-family: 'Quicksand', sans-serif !important;
         line-height: 1 !important;
         margin-top: -18px !important;
         padding: 0 !important;
@@ -218,6 +228,7 @@ st.markdown("""
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-size: 18px !important;
+        font-family: 'Quicksand', sans-serif !important;
     }
 
     [data-testid="stChatMessageContainer"] {
@@ -260,14 +271,19 @@ st.markdown("""
     .onboarding-card h2 {
         color: #9C6EF9 !important;
         font-size: 24px !important;
+        font-family: 'Quicksand', sans-serif !important;
+        font-weight: 700 !important;
         margin-top: 0 !important;
     }
     .onboarding-card h3 {
         color: #FFFFFF !important;
         font-size: 20px !important;
+        font-family: 'Quicksand', sans-serif !important;
+        font-weight: 600 !important;
     }
     .onboarding-card p, .onboarding-card li {
         font-size: 16px !important;
+        font-family: 'Quicksand', sans-serif !important;
         line-height: 1.6 !important;
         color: #E0E0E0 !important;
     }
@@ -292,6 +308,8 @@ st.markdown("""
         color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
         font-size: 18px !important;
+        font-family: 'Quicksand', sans-serif !important;
+        font-weight: 500 !important;
         border-radius: 24px !important;
         background-color: transparent !important;
         background: transparent !important;
@@ -307,6 +325,7 @@ st.markdown("""
         color: #666666 !important;
         -webkit-text-fill-color: #666666 !important;
         font-size: 18px !important;
+        font-family: 'Quicksand', sans-serif !important;
         line-height: 48px !important;
     }
 
@@ -476,6 +495,6 @@ elif selected_page == "Onboarding":
         <div class="onboarding-card">
             <h3>📖 Fullständiga Användardokumentation</h3>
             <p>För mer ingående instruktioner, vanliga frågor och detaljerade guider om samtliga funktioner i Paxly, se vår fullständiga dokumentation:</p>
-            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a></p>
+            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px; font-family: 'Quicksand', sans-serif;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a></p>
         </div>
     ''', unsafe_allow_html=True)
