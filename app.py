@@ -266,6 +266,7 @@ st.markdown("""
         -webkit-backdrop-filter: blur(12px) !important;
         border-radius: 20px !important;
         padding: 36px 32px !important;
+        margin-top: 30px !important; /* ÖKAT AVSTÅND TILL LOGO BARA PÅ ONBOARDING */
         margin-bottom: 20px !important;
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         width: 100% !important;
@@ -276,7 +277,7 @@ st.markdown("""
         color: #9C6EF9 !important;
         font-size: 22px !important;
         font-weight: 700 !important;
-        margin-top: 10px !important;
+        margin-top: 28px !important;
         margin-bottom: 14px !important;
     }
 
@@ -543,36 +544,35 @@ if selected_page == "Chatt":
 elif selected_page == "Onboarding":
     def format_doc_to_pretty_html(text):
         """Konverterar råtext från Google Docs till strukturerad HTML utan titeln 'Paxly Onboarding'"""
-        lines = text.strip().split('\n')
+        lines = [line.strip() for line in text.strip().split('\n') if line.strip()]
         html_output = []
         in_ol = False
 
-        for line in lines:
-            stripped = line.strip()
-            if not stripped:
+        for i, line in enumerate(lines):
+            # Filtrera bort "Paxly Onboarding" helt
+            if "paxly onboarding" in line.lower():
                 continue
 
-            # Hoppa över huvudtiteln ("Paxly Onboarding")
-            if stripped.lower() == "paxly onboarding":
-                continue
-
-            # Om raden börjar med siffra + punkt (t.ex. 1. Aktivera...)
-            if re.match(r'^\d+\.\s+', stripped):
+            # Kontrollera om raden är en numrerad punkt (t.ex. 1. Aktivera...)
+            if re.match(r'^\d+\.\s+', line):
                 if not in_ol:
                     html_output.append('<ol>')
                     in_ol = True
-                clean_item = re.sub(r'^\d+\.\s+', '', stripped)
+                clean_item = re.sub(r'^\d+\.\s+', '', line)
                 html_output.append(f'<li>{clean_item}</li>')
             else:
                 if in_ol:
                     html_output.append('</ol>')
                     in_ol = False
 
-                # Underrubriker (som "Kom igång med...")
-                if stripped.startswith("Kom igång") or stripped.startswith("Bjud in"):
-                    html_output.append(f'<h2>{stripped}</h2>')
+                # Om nästa rad är en numrerad punkt (1.) behandlas denna rad automatiskt som en rubrik (<h2>)
+                next_is_num = (i + 1 < len(lines)) and bool(re.match(r'^\d+\.\s+', lines[i + 1]))
+                
+                if next_is_num or line.startswith("#"):
+                    clean_header = line.lstrip("#").strip()
+                    html_output.append(f'<h2>{clean_header}</h2>')
                 else:
-                    html_output.append(f'<p>{stripped}</p>')
+                    html_output.append(f'<p>{line}</p>')
 
         if in_ol:
             html_output.append('</ol>')
