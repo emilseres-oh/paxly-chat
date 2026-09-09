@@ -272,24 +272,18 @@ st.markdown("""
     }
     .onboarding-card h2 {
         color: #9C6EF9 !important;
-        font-size: 24px !important;
+        font-size: 22px !important;
         font-family: 'Quicksand', sans-serif !important;
         font-weight: 700 !important;
         margin-top: 0 !important;
-        margin-bottom: 12px !important;
+        margin-bottom: 14px !important;
     }
-    .onboarding-card h3 {
-        color: #9C6EF9 !important;
-        font-size: 20px !important;
-        font-family: 'Quicksand', sans-serif !important;
-        font-weight: 600 !important;
-        margin-top: 0 !important;
-    }
-    .onboarding-card p, .onboarding-card div {
+    .onboarding-card p {
         font-size: 16px !important;
         font-family: 'Quicksand', sans-serif !important;
         line-height: 1.6 !important;
         color: #E0E0E0 !important;
+        margin-bottom: 10px !important;
     }
     .onboarding-card ul, .onboarding-card ol {
         margin-top: 8px !important;
@@ -301,7 +295,7 @@ st.markdown("""
         font-family: 'Quicksand', sans-serif !important;
         line-height: 1.6 !important;
         color: #E0E0E0 !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 8px !important;
     }
 
     /* EXAKT FÖR TEXTAREA & CHATINPUT: SVART TEXT FÖR ANVÄNDARE, GRÅ PLACEHOLDER */
@@ -541,27 +535,60 @@ if selected_page == "Chatt":
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
-    # Dela upp texten vid numrerade punkter eller rubriker
+    # Dela upp teksten vid numrerade punkter eller markdown-rubriker (#)
     raw_sections = re.split(r'\n(?=#|\d+\.\s+)', DOC3_TEXT.strip())
     
     sections = [s.strip() for s in raw_sections if s.strip()]
+
+    def format_body_to_html(text):
+        """Omvandlar brödtext till ren HTML (paragrafer och punktlistor)"""
+        lines = text.strip().split('\n')
+        html_output = []
+        in_list = False
+
+        for line in lines:
+            line_str = line.strip()
+            if not line_str:
+                continue
+
+            # Kontrollera om raden är en punktlista (börjar med -, *, •)
+            if re.match(r'^[-\*•]\s+', line_str):
+                if not in_list:
+                    html_output.append('<ul>')
+                    in_list = True
+                item_text = re.sub(r'^[-\*•]\s+', '', line_str)
+                html_output.append(f'<li>{item_text}</li>')
+            else:
+                if in_list:
+                    html_output.append('</ul>')
+                    in_list = False
+                html_output.append(f'<p>{line_str}</p>')
+
+        if in_list:
+            html_output.append('</ul>')
+
+        return ''.join(html_output)
 
     for section in sections:
         lines = section.split('\n', 1)
         header_text = lines[0].lstrip('#').strip()
         body_text = lines[1].strip() if len(lines) > 1 else ""
 
-        # Filtrera bort introduktionsrubrikerna ("Paxly Onboarding", "Paxly Onboarding Guide" osv)
-        clean_header_check = header_text.lower().replace(" ", "")
-        if "paxlyonboarding" in clean_header_check or "komigångmedresursbokningar" in clean_header_check and not body_text:
+        # Ta bort rena rubrik/titel-sektioner utan ordentligt innehåll (som "Paxly Onboarding")
+        clean_check = header_text.lower().replace(" ", "")
+        if "paxlyonboarding" in clean_check and not body_text:
+            continue
+        if "komigångmed" in clean_check and not body_text:
             continue
 
-        # Rendera varje avsnitt som rent Markdown-kort så att punktlistor och formatting renderas korrekt
-        st.markdown(
-            f'<div class="onboarding-card"><h2>{header_text}</h2></div>',
-            unsafe_allow_html=True
-        )
-        
-        # Om det finns brödtext / punktlista, skriv ut den i Markdown
-        if body_text:
-            st.markdown(body_text)
+        # Bygg upp brödtexten i HTML
+        body_html = format_body_to_html(body_text) if body_text else ""
+
+        # Rendera rubrik + allt innehåll i en och samma box
+        card_html = f'''
+            <div class="onboarding-card">
+                <h2>{header_text}</h2>
+                {body_html}
+            </div>
+        '''
+        st.markdown(card_html, unsafe_allow_html=True)
