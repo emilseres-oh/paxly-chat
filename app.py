@@ -1,4 +1,5 @@
 import os
+import re
 import time
 import base64
 import urllib.request
@@ -264,15 +265,43 @@ st.markdown("""
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
         border-radius: 20px !important;
-        padding: 28px !important;
+        padding: 36px 32px !important;
         margin-bottom: 20px !important;
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         width: 100% !important;
-        white-space: pre-wrap !important;
         font-family: 'Quicksand', sans-serif !important;
+    }
+
+    .onboarding-card h2 {
+        color: #9C6EF9 !important;
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        margin-top: 10px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .onboarding-card h2:first-child {
+        margin-top: 0 !important;
+    }
+
+    .onboarding-card ol, .onboarding-card ul {
+        margin-top: 10px !important;
+        margin-bottom: 28px !important;
+        padding-left: 24px !important;
+    }
+
+    .onboarding-card li {
+        font-size: 16px !important;
+        line-height: 1.7 !important;
+        color: #E0E0E0 !important;
+        margin-bottom: 12px !important;
+    }
+
+    .onboarding-card p {
         font-size: 16px !important;
         line-height: 1.6 !important;
         color: #E0E0E0 !important;
+        margin-bottom: 12px !important;
     }
 
     /* EXAKT FÖR TEXTAREA & CHATINPUT: SVART TEXT FÖR ANVÄNDARE, GRÅ PLACEHOLDER */
@@ -512,9 +541,48 @@ if selected_page == "Chatt":
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
-    # Lägg all text från Google Docs i en enda box
+    def format_doc_to_pretty_html(text):
+        """Konverterar råtext från Google Docs till strukturerad HTML utan titeln 'Paxly Onboarding'"""
+        lines = text.strip().split('\n')
+        html_output = []
+        in_ol = False
+
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                continue
+
+            # Hoppa över huvudtiteln ("Paxly Onboarding")
+            if stripped.lower() == "paxly onboarding":
+                continue
+
+            # Om raden börjar med siffra + punkt (t.ex. 1. Aktivera...)
+            if re.match(r'^\d+\.\s+', stripped):
+                if not in_ol:
+                    html_output.append('<ol>')
+                    in_ol = True
+                clean_item = re.sub(r'^\d+\.\s+', '', stripped)
+                html_output.append(f'<li>{clean_item}</li>')
+            else:
+                if in_ol:
+                    html_output.append('</ol>')
+                    in_ol = False
+
+                # Underrubriker (som "Kom igång med...")
+                if stripped.startswith("Kom igång") or stripped.startswith("Bjud in"):
+                    html_output.append(f'<h2>{stripped}</h2>')
+                else:
+                    html_output.append(f'<p>{stripped}</p>')
+
+        if in_ol:
+            html_output.append('</ol>')
+
+        return "".join(html_output)
+
+    pretty_content = format_doc_to_pretty_html(DOC3_TEXT)
+
     st.markdown(f'''
         <div class="onboarding-card">
-{DOC3_TEXT}
+            {pretty_content}
         </div>
     ''', unsafe_allow_html=True)
