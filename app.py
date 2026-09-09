@@ -396,9 +396,10 @@ def fetch_google_doc_text(doc_id):
     except Exception as e:
         return f"Kunde inte hämta dokumentet ({doc_id}): {e}"
 
-# HÄMTA DE TVÅ DOKUMENTEN
+# HÄMTA DE TRE DOKUMENTEN
 DOC1_TEXT = fetch_google_doc_text("1qCOWysw_B6KDsCT7jPh4Aa9R_1CD5WFk53A4vgTb0JI")
 DOC2_TEXT = fetch_google_doc_text("15Mg6bJGO9viBxYF6fnBM5hehf9spUXpjbVevoWBEldk")
+DOC3_TEXT = fetch_google_doc_text("13Vw5RUvLFzST8JL5nIXyRHUULL6mvhD4pq6Y6AdE3Mg")
 
 bg_base64 = get_base64_image("bg.jpg")
 
@@ -479,6 +480,9 @@ if selected_page == "Chatt":
 
     --- DOKUMENT 2 ---
     {DOC2_TEXT}
+
+    --- DOKUMENT 3 ---
+    {DOC3_TEXT}
     """
 
     human_b64 = get_base64_image("human.png")
@@ -534,56 +538,20 @@ if selected_page == "Chatt":
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
-    st.markdown('''
+    # Rendera innehållet från Dokument 3 direkt i ett onboarding-kort
+    st.markdown(f'''
         <div class="onboarding-card">
-            <h2>Välkommen till Paxly Onboarding</h2>
-            <p>Här hittar du allt du behöver för att komma igång med ditt smarta bokningssystem. Följ guiden nedan för att konfigurera dina resurser och ta emot dina första bokningar.</p>
-        </div>
-    ''', unsafe_allow_html=True)
-
-    st.markdown('''
-        <div class="onboarding-card">
-            <h3>1. Registrera dina Resurser</h3>
-            <p>En resurs kan vara vad som helst som är bokningsbart – allt från mötesrum och fordon till rådgivare och utrustning.</p>
-            <ul>
-                <li>Ställ in maxkapacitet och lokaltyp</li>
-                <li>Bestäm ställtid och bufferttid mellan bokningar</li>
-                <li>Länka direkt till extern kalendersynkning (Outlook / Google Calendar)</li>
-            </ul>
-        </div>
-    ''', unsafe_allow_html=True)
-
-    if os.path.exists("logo.png"):
-        st.markdown('''
-            <div style="text-align: center; margin-bottom: 20px;">
-                <img src="data:image/png;base64,{}" style="max-width: 100%; border-radius: 12px;" alt="Resource Engine">
+            <h2>Paxly Onboarding Guide</h2>
+            <div style="white-space: pre-wrap; font-family: 'Quicksand', sans-serif; line-height: 1.6; color: #E0E0E0;">
+{DOC3_TEXT}
             </div>
-        '''.format(get_base64_image("logo.png")), unsafe_allow_html=True)
-
-    st.markdown('''
-        <div class="onboarding-card">
-            <h3>2. Hantera och Automatisera Bokningar</h3>
-            <p>Användarna kan boka direkt via er kundanpassade portal eller via den inbäddade widgeten på er hemsida.</p>
-            <ul>
-                <li>Automatisk bokningsbekräftelse skickas direkt via e-post</li>
-                <li>Inbyggda påminnelser 24 timmar innan bokad tid</li>
-                <li>Smidiga avbokningsregler och kundanpassad schemaläggning</li>
-            </ul>
         </div>
     ''', unsafe_allow_html=True)
 
-    if os.path.exists("bg.jpg"):
-        st.markdown('''
-            <div style="text-align: center; margin-bottom: 20px;">
-                <img src="data:image/jpeg;base64,{}" style="max-width: 100%; border-radius: 12px;" alt="Bokningsvy">
-            </div>
-        '''.format(get_base64_image("bg.jpg")), unsafe_allow_html=True)
-
     st.markdown('''
         <div class="onboarding-card">
-            <h3>📖 Fullständiga Användardokumentation</h3>
-            <p>För mer ingående instruktioner, vanliga frågor och detaljerade guider om samtliga funktioner i Paxly, se vår fullständiga dokumentation:</p>
-            <p><a href="https://docs.google.com/document/d/1qCOWysw_B6KDsCT7jPh4Aa9R_1CD5WFk53A4vgTb0JI/edit?usp=sharing" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px; font-family: 'Quicksand', sans-serif;">📄 Öppna Dokument 1 (Google Doc)</a></p>
-            <p><a href="https://docs.google.com/document/d/15Mg6bJGO9viBxYF6fnBM5hehf9spUXpjbVevoWBEldk/edit?usp=sharing" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px; font-family: 'Quicksand', sans-serif;">📄 Öppna Dokument 2 (Google Doc)</a></p>
+            <h3>📖 Källdokument</h3>
+            <p>Du kan även öppna och läsa originaldokumentet direkt via Google Docs:</p>
+            <p><a href="https://docs.google.com/document/d/13Vw5RUvLFzST8JL5nIXyRHUULL6mvhD4pq6Y6AdE3Mg/edit?usp=sharing" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px; font-family: 'Quicksand', sans-serif;">📄 Öppna Onboarding-dokumentet (Google Doc)</a></p>
         </div>
     ''', unsafe_allow_html=True)
