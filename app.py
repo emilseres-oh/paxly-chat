@@ -535,60 +535,45 @@ if selected_page == "Chatt":
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
-    # Dela upp teksten vid numrerade punkter eller markdown-rubriker (#)
-    raw_sections = re.split(r'\n(?=#|\d+\.\s+)', DOC3_TEXT.strip())
+    # Dela endast upp texten vid numrerade HUVUDRUBRIKER (t.ex. "1. ", "2. ")
+    raw_sections = re.split(r'\n(?=\d+\.\s+)', DOC3_TEXT.strip())
     
     sections = [s.strip() for s in raw_sections if s.strip()]
 
-    def format_body_to_html(text):
-        """Omvandlar brödtext till ren HTML (paragrafer och punktlistor)"""
-        lines = text.strip().split('\n')
-        html_output = []
-        in_list = False
+    def format_lines_to_list_html(lines_text):
+        """Konverterar rader till ren <ul><li>HTML-punktlista"""
+        lines = lines_text.strip().split('\n')
+        list_items = []
 
         for line in lines:
-            line_str = line.strip()
-            if not line_str:
+            clean_line = line.strip()
+            if not clean_line:
                 continue
+            # Ta bort inledande punkttecken som -, *, •, eller sifferpunkter
+            clean_line = re.sub(r'^([-\*•]|\d+[\.\)])\s*', '', clean_line)
+            list_items.append(f'<li>{clean_line}</li>')
 
-            # Kontrollera om raden är en punktlista (börjar med -, *, •)
-            if re.match(r'^[-\*•]\s+', line_str):
-                if not in_list:
-                    html_output.append('<ul>')
-                    in_list = True
-                item_text = re.sub(r'^[-\*•]\s+', '', line_str)
-                html_output.append(f'<li>{item_text}</li>')
-            else:
-                if in_list:
-                    html_output.append('</ul>')
-                    in_list = False
-                html_output.append(f'<p>{line_str}</p>')
-
-        if in_list:
-            html_output.append('</ul>')
-
-        return ''.join(html_output)
+        if list_items:
+            return f'<ul>{"".join(list_items)}</ul>'
+        return ""
 
     for section in sections:
         lines = section.split('\n', 1)
-        header_text = lines[0].lstrip('#').strip()
-        body_text = lines[1].strip() if len(lines) > 1 else ""
+        header_line = lines[0].strip()
+        body_lines = lines[1].strip() if len(lines) > 1 else ""
 
-        # Ta bort rena rubrik/titel-sektioner utan ordentligt innehåll (som "Paxly Onboarding")
-        clean_check = header_text.lower().replace(" ", "")
-        if "paxlyonboarding" in clean_check and not body_text:
-            continue
-        if "komigångmed" in clean_check and not body_text:
+        # Om det är introduktionstext utan nummer (t.ex. "Paxly Onboarding"), hoppa över
+        if not re.match(r'^\d+\.\s+', header_line):
             continue
 
-        # Bygg upp brödtexten i HTML
-        body_html = format_body_to_html(body_text) if body_text else ""
+        # Formatera alla efterföljande rader till en punktlista
+        list_html = format_lines_to_list_html(body_lines) if body_lines else ""
 
-        # Rendera rubrik + allt innehåll i en och samma box
+        # Rendera H2-rubriken OCH punktlistan tillsammans inuti samma box
         card_html = f'''
             <div class="onboarding-card">
-                <h2>{header_text}</h2>
-                {body_html}
+                <h2>{header_line}</h2>
+                {list_html}
             </div>
         '''
         st.markdown(card_html, unsafe_allow_html=True)
