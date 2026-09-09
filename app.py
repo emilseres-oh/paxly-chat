@@ -4,10 +4,10 @@ import time
 import base64
 import urllib.request
 import datetime
-import pandas as pd
 import streamlit as st
 from google import genai
-from streamlit_gsheets import GSheetsConnection
+import gspread
+from google.oauth2.service_account import Credentials
 
 st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
@@ -391,25 +391,36 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
-# FUNKTION FÖR ATT SPARA FRÅGOR TILL GOOGLE SHEETS
+# DIREKT OCH SÄKER LOGGNING TILL GOOGLE SHEETS
 def save_question_to_gsheets(question):
     try:
-        conn = st.connection("gsheets", type=GSheetsConnection)
+        scope = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
         
-        # Hämta befintlig data
-        existing_data = conn.read(ttl=0)
+        # Hämta uppgifter från secrets
+        creds_dict = st.secrets["connections"]["gsheets"]
         
-        # Skapa ny rad med datum och fråga
+        service_account_info = {
+            "type": creds_dict["type"],
+            "project_id": creds_dict["project_id"],
+            "private_key_id": creds_dict["private_key_id"],
+            "private_key": creds_dict["private_key"],
+            "client_email": creds_dict["client_email"],
+            "client_id": creds_dict["client_id"],
+        }
+        
+        creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
+        client = gspread.authorize(creds)
+        
+        sheet_url = creds_dict["spreadsheet"]
+        sheet = client.open_by_url(sheet_url).sheet1
+        
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        new_row = pd.DataFrame([{"Datum & tid": timestamp, "Fråga": question}])
-        
-        # Slå ihop gammal och ny data
-        updated_data = pd.concat([existing_data, new_row], ignore_index=True)
-        
-        # Spara tillbaka till Google Sheets
-        conn.update(data=updated_data)
+        sheet.append_row([timestamp, question])
     except Exception as e:
-        print(f"Kunde inte spara till Google Sheets: {e}")
+        st.error(f"Kunde inte logga fråga: {e}")
 
 # FUNKTION FÖR ATT HÄMTA TEXT FRÅN GOOGLE DOCS (MED CACHE PÅ 1 TIMME)
 @st.cache_data(ttl=3600)
@@ -538,7 +549,7 @@ if selected_page == "Chatt":
             st.markdown(message["content"])
 
     if prompt := st.chat_input("Skriv din fråga här..."):
-        # SPARA FRÅGAN TILL GOOGLE SHEETS
+        # SPARA FRÅGAN TILL GOOGLE SHEETS (Visar ev. felmeddelande direkt på skärmen)
         save_question_to_gsheets(prompt)
 
         st.session_state.messages.append({"role": "user", "content": prompt})
