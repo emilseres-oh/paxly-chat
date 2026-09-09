@@ -402,9 +402,10 @@ def save_question_to_gsheets(question):
         # Hämta uppgifter från secrets
         creds_dict = dict(st.secrets["connections"]["gsheets"])
         
-        # Fixa radbrytningar i private_key om de strular
-        if "private_key" in creds_dict:
-            creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
+        # Tvätta den privata nyckeln från dolda escapetecken eller felaktiga radbrytningar
+        p_key = creds_dict["private_key"]
+        p_key = p_key.replace("\\n", "\n").replace("\r", "")
+        creds_dict["private_key"] = p_key
         
         # Säkerställ att token_uri finns med
         if "token_uri" not in creds_dict:
