@@ -1,5 +1,4 @@
 import os
-import re
 import time
 import base64
 import urllib.request
@@ -269,33 +268,11 @@ st.markdown("""
         margin-bottom: 20px !important;
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         width: 100% !important;
-    }
-    .onboarding-card h2 {
-        color: #9C6EF9 !important;
-        font-size: 22px !important;
+        white-space: pre-wrap !important;
         font-family: 'Quicksand', sans-serif !important;
-        font-weight: 700 !important;
-        margin-top: 0 !important;
-        margin-bottom: 14px !important;
-    }
-    .onboarding-card p {
         font-size: 16px !important;
-        font-family: 'Quicksand', sans-serif !important;
         line-height: 1.6 !important;
         color: #E0E0E0 !important;
-        margin-bottom: 10px !important;
-    }
-    .onboarding-card ul, .onboarding-card ol {
-        margin-top: 8px !important;
-        margin-bottom: 12px !important;
-        padding-left: 20px !important;
-    }
-    .onboarding-card li {
-        font-size: 16px !important;
-        font-family: 'Quicksand', sans-serif !important;
-        line-height: 1.6 !important;
-        color: #E0E0E0 !important;
-        margin-bottom: 8px !important;
     }
 
     /* EXAKT FÖR TEXTAREA & CHATINPUT: SVART TEXT FÖR ANVÄNDARE, GRÅ PLACEHOLDER */
@@ -535,46 +512,9 @@ if selected_page == "Chatt":
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
-    # Dela upp hela dokumentet rad för rad
-    lines = DOC3_TEXT.strip().split('\n')
-
-    parsed_sections = []
-    current_header = None
-    current_items = []
-
-    for line in lines:
-        stripped = line.strip()
-        if not stripped:
-            continue
-
-        # Kontrollera om raden är en numrerad huvudrubrik (t.ex. "1. Aktivera...", "2. Lägg till...")
-        if re.match(r'^\d+\.\s+', stripped):
-            if current_header:
-                parsed_sections.append((current_header, current_items))
-            current_header = stripped
-            current_items = []
-        else:
-            if current_header:
-                # Tvätta bort punkttecken (- *, •, eller undermenynummer) från raden
-                clean_item = re.sub(r'^([-\*•]|\d+[\.\)])\s*', '', stripped)
-                if clean_item:
-                    current_items.append(clean_item)
-
-    # Spara den sista sektionen
-    if current_header:
-        parsed_sections.append((current_header, current_items))
-
-    # Rendera varje numrerad rubrik OCH dess punktlista tillsammans inuti samma box
-    for header, items in parsed_sections:
-        items_html = ""
-        if items:
-            list_elements = "".join([f"<li>{item}</li>" for item in items])
-            items_html = f"<ul>{list_elements}</ul>"
-
-        card_html = f'''
-            <div class="onboarding-card">
-                <h2>{header}</h2>
-                {items_html}
-            </div>
-        '''
-        st.markdown(card_html, unsafe_allow_html=True)
+    # Lägg all text från Google Docs i en enda box
+    st.markdown(f'''
+        <div class="onboarding-card">
+{DOC3_TEXT}
+        </div>
+    ''', unsafe_allow_html=True)
