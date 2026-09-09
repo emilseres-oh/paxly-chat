@@ -3,11 +3,8 @@ import re
 import time
 import base64
 import urllib.request
-import datetime
 import streamlit as st
 from google import genai
-import gspread
-from google.oauth2.service_account import Credentials
 
 st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
@@ -391,31 +388,6 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
-# DIREKT OCH SÄKER LOGGNING TILL GOOGLE SHEETS
-def save_question_to_gsheets(question):
-    try:
-        scope = [
-            "https://www.googleapis.com/auth/spreadsheets",
-            "https://www.googleapis.com/auth/drive"
-        ]
-        
-        # Hämta service account-konfigurationen direkt från [gcp_service_account]
-        service_account_info = dict(st.secrets["gcp_service_account"])
-        
-        # Konvertera escaped \n till faktiska radbrytningar
-        service_account_info["private_key"] = service_account_info["private_key"].replace("\\n", "\n")
-        
-        creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
-        client = gspread.authorize(creds)
-        
-        sheet_url = st.secrets["GSHEET_URL"]
-        sheet = client.open_by_url(sheet_url).sheet1
-        
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        sheet.append_row([timestamp, question])
-    except Exception as e:
-        st.error(f"Kunde inte logga fråga: {e}")
-
 # FUNKTION FÖR ATT HÄMTA TEXT FRÅN GOOGLE DOCS (MED CACHE PÅ 1 TIMME)
 @st.cache_data(ttl=3600)
 def fetch_google_doc_text(doc_id):
@@ -543,9 +515,6 @@ if selected_page == "Chatt":
             st.markdown(message["content"])
 
     if prompt := st.chat_input("Skriv din fråga här..."):
-        # SPARA FRÅGAN TILL GOOGLE SHEETS
-        save_question_to_gsheets(prompt)
-
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user", avatar=USER_AVATAR):
             st.markdown(prompt)
