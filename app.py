@@ -400,18 +400,13 @@ def save_question_to_gsheets(question):
         ]
         
         # Hämta uppgifter från secrets
-        creds_dict = st.secrets["connections"]["gsheets"]
+        creds_dict = dict(st.secrets["connections"]["gsheets"])
         
-        service_account_info = {
-            "type": creds_dict["type"],
-            "project_id": creds_dict["project_id"],
-            "private_key_id": creds_dict["private_key_id"],
-            "private_key": creds_dict["private_key"],
-            "client_email": creds_dict["client_email"],
-            "client_id": creds_dict["client_id"],
-        }
-        
-        creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
+        # Säkerställ att token_uri finns med
+        if "token_uri" not in creds_dict:
+            creds_dict["token_uri"] = "https://oauth2.googleapis.com/token"
+            
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
         client = gspread.authorize(creds)
         
         sheet_url = creds_dict["spreadsheet"]
@@ -549,7 +544,7 @@ if selected_page == "Chatt":
             st.markdown(message["content"])
 
     if prompt := st.chat_input("Skriv din fråga här..."):
-        # SPARA FRÅGAN TILL GOOGLE SHEETS (Visar ev. felmeddelande direkt på skärmen)
+        # SPARA FRÅGAN TILL GOOGLE SHEETS
         save_question_to_gsheets(prompt)
 
         st.session_state.messages.append({"role": "user", "content": prompt})
