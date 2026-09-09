@@ -111,32 +111,6 @@ st.markdown("""
         100% { transform: scale(1); opacity: 1; }
     }
 
-    /* RAKETLAUNCH ANIMATION */
-    @keyframes rocketLaunch {
-        0% {
-            transform: translateY(0) scale(0.8) rotate(-20deg);
-            opacity: 1;
-        }
-        50% {
-            transform: translateY(-250px) scale(1.4) rotate(-10deg);
-            opacity: 1;
-        }
-        100% {
-            transform: translateY(-600px) scale(2) rotate(0deg);
-            opacity: 0;
-        }
-    }
-
-    .rocket-anim {
-        position: fixed;
-        bottom: 80px;
-        right: calc(50% - 240px);
-        font-size: 50px;
-        z-index: 999999;
-        pointer-events: none;
-        animation: rocketLaunch 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-    }
-
     /* LOGOTYP-CONTAINER MED EXTRA AVSTÅND NEDÅT */
     .logo-container {
         display: flex;
@@ -162,9 +136,6 @@ st.markdown("""
         .logo-container img {
             width: 200px !important;
             max-width: 70% !important;
-        }
-        .rocket-anim {
-            right: 20px;
         }
     }
 
@@ -403,12 +374,7 @@ st.markdown("""
     [data-testid="stChatInputSubmitButton"] button:hover,
     [data-testid="stChatInput"] button:hover {
         background-color: #8552f8 !important;
-        transform: scale(1.1) rotate(-8deg) !important;
-    }
-
-    [data-testid="stChatInputSubmitButton"] button:active,
-    [data-testid="stChatInput"] button:active {
-        transform: scale(0.9) rotate(10deg) !important;
+        transform: scale(1.05) !important;
     }
 
     [data-testid="stChatInputSubmitButton"] svg,
@@ -540,9 +506,6 @@ if selected_page == "Chatt":
             st.markdown(message["content"])
 
     if prompt := st.chat_input("Skriv din fråga här..."):
-        # Triggat vid skicka: visar den flygande raket-animationen
-        st.markdown('<div class="rocket-anim">🚀</div>', unsafe_allow_html=True)
-
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user", avatar=USER_AVATAR):
             st.markdown(prompt)
@@ -554,7 +517,7 @@ if selected_page == "Chatt":
             loader_placeholder.markdown('''
                 <div class="custom-loader">
                     <div class="custom-spinner"></div>
-                    <span>Hämtar information...</span>
+                    <span>Tänker och hämtar information…</span>
                 </div>
             ''', unsafe_allow_html=True)
 
