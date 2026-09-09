@@ -2,6 +2,7 @@ import os
 import re
 import time
 import base64
+import json
 import urllib.request
 import datetime
 import streamlit as st
@@ -399,22 +400,13 @@ def save_question_to_gsheets(question):
             "https://www.googleapis.com/auth/drive"
         ]
         
-        # Hämta uppgifter från secrets
-        creds_dict = dict(st.secrets["connections"]["gsheets"])
+        # Läs in JSON-strängen från secrets
+        json_info = json.loads(st.secrets["GSERVICEACCOUNT"])
         
-        # Tvätta den privata nyckeln från dolda escapetecken eller felaktiga radbrytningar
-        p_key = creds_dict["private_key"]
-        p_key = p_key.replace("\\n", "\n").replace("\r", "")
-        creds_dict["private_key"] = p_key
-        
-        # Säkerställ att token_uri finns med
-        if "token_uri" not in creds_dict:
-            creds_dict["token_uri"] = "https://oauth2.googleapis.com/token"
-            
-        creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
+        creds = Credentials.from_service_account_info(json_info, scopes=scope)
         client = gspread.authorize(creds)
         
-        sheet_url = creds_dict["spreadsheet"]
+        sheet_url = st.secrets["GSHEET_URL"]
         sheet = client.open_by_url(sheet_url).sheet1
         
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
