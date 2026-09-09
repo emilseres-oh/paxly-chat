@@ -1,6 +1,7 @@
 import os
 import time
 import base64
+import urllib.request
 import streamlit as st
 from google import genai
 
@@ -107,7 +108,7 @@ st.markdown("""
         align-items: center;
         width: 100%;
         height: 90px;
-        margin-bottom: 50px !important; /* Ökat från 25px till 50px */
+        margin-bottom: 50px !important;
         margin-top: 10px;
         animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
@@ -205,7 +206,7 @@ st.markdown("""
 
     [data-testid="stChatMessageContainer"] {
         gap: 0.4rem !important;
-        margin-top: 15px !important; /* Extra marginal ovanför första meddelandet */
+        margin-top: 15px !important;
     }
 
     /* GLAS-KÄNSLA PÅ CHATTMEDDELANDEN MED ANIMATION */
@@ -331,6 +332,21 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
+# FUNKTION FÖR ATT HÄMTA TEXT FRÅN GOOGLE DOCS (MED CACHE)
+@st.cache_data(ttl=3600)
+def fetch_google_doc_text(doc_id):
+    try:
+        url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt"
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req) as response:
+            return response.read().decode('utf-8')
+    except Exception as e:
+        return f"Kunde inte hämta dokumentet ({doc_id}): {e}"
+
+# HÄMTA DE TVÅ DOKUMENTEN
+DOC1_TEXT = fetch_google_doc_text("1qCOWysw_B6KDsCT7jPh4Aa9R_1CD5WFk53A4vgTb0JI")
+DOC2_TEXT = fetch_google_doc_text("15Mg6bJGO9viBxYF6fnBM5hehf9spUXpjbVevoWBEldk")
+
 bg_base64 = get_base64_image("bg.jpg")
 
 if bg_base64:
@@ -398,10 +414,18 @@ if selected_page == "Chatt":
 
     client = genai.Client(api_key=api_key)
 
-    SYSTEM_INSTRUCTION = """
+    # BYGG IN DOKUMENTEN I SYSTEMINSTRUKTIONEN FÖR ASSISTENTEN
+    SYSTEM_INSTRUCTION = f"""
     Du är en dryg och otrevlig support-assistent för bokningssystemet Paxly.
     Svara alltid på svenska. Användaren heter Eva. Du säger grejer som: "Det undrar du allt va, Eva!?" "Det där får du ta reda på själv tycker jag!"
     Lägg gärna in något drygt men roligt skämt i dina svar. Svara kortfattat.
+
+    Du har tillgång till följande dokumentation om Paxly. Använd denna fakta när du svarar på frågor, men behåll din dryga personlighet:
+    --- DOKUMENT 1 ---
+    {DOC1_TEXT}
+
+    --- DOKUMENT 2 ---
+    {DOC2_TEXT}
     """
 
     human_b64 = get_base64_image("human.png")
@@ -506,6 +530,7 @@ elif selected_page == "Onboarding":
         <div class="onboarding-card">
             <h3>📖 Fullständiga Användardokumentation</h3>
             <p>För mer ingående instruktioner, vanliga frågor och detaljerade guider om samtliga funktioner i Paxly, se vår fullständiga dokumentation:</p>
-            <p><a href="https://docs.google.com/document/d/1lJpjo_v3nFn7KDMughZDHtKrTWyL42E2NW5hAR_ATaw/edit?usp=drive_web" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px; font-family: 'Quicksand', sans-serif;">📄 Öppna Paxly Onboarding & Dokumentation (Google Doc)</a></p>
+            <p><a href="https://docs.google.com/document/d/1qCOWysw_B6KDsCT7jPh4Aa9R_1CD5WFk53A4vgTb0JI/edit?usp=sharing" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px; font-family: 'Quicksand', sans-serif;">📄 Öppna Dokument 1 (Google Doc)</a></p>
+            <p><a href="https://docs.google.com/document/d/15Mg6bJGO9viBxYF6fnBM5hehf9spUXpjbVevoWBEldk/edit?usp=sharing" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px; font-family: 'Quicksand', sans-serif;">📄 Öppna Dokument 2 (Google Doc)</a></p>
         </div>
     ''', unsafe_allow_html=True)
