@@ -276,6 +276,7 @@ st.markdown("""
         font-family: 'Quicksand', sans-serif !important;
         font-weight: 700 !important;
         margin-top: 0 !important;
+        margin-bottom: 12px !important;
     }
     .onboarding-card h3 {
         color: #9C6EF9 !important;
@@ -284,7 +285,7 @@ st.markdown("""
         font-weight: 600 !important;
         margin-top: 0 !important;
     }
-    .onboarding-card p {
+    .onboarding-card p, .onboarding-card div {
         font-size: 16px !important;
         font-family: 'Quicksand', sans-serif !important;
         line-height: 1.6 !important;
@@ -540,30 +541,27 @@ if selected_page == "Chatt":
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
-    # Dela upp texten från DOC3_TEXT vid rubriker (# eller numrerade rubriker som "1. ", "2. ")
+    # Dela upp texten vid numrerade punkter eller rubriker
     raw_sections = re.split(r'\n(?=#|\d+\.\s+)', DOC3_TEXT.strip())
     
     sections = [s.strip() for s in raw_sections if s.strip()]
-
-    if not sections:
-        sections = [DOC3_TEXT.strip()]
-
-    FORBIDDEN_HEADERS = ["paxly onboarding guide", "paxly onboarding"]
 
     for section in sections:
         lines = section.split('\n', 1)
         header_text = lines[0].lstrip('#').strip()
         body_text = lines[1].strip() if len(lines) > 1 else ""
 
-        # Ignorera sektioner som bara innehåller Paxly Onboarding / Guide som titel
-        if header_text.lower() in FORBIDDEN_HEADERS:
+        # Filtrera bort introduktionsrubrikerna ("Paxly Onboarding", "Paxly Onboarding Guide" osv)
+        clean_header_check = header_text.lower().replace(" ", "")
+        if "paxlyonboarding" in clean_header_check or "komigångmedresursbokningar" in clean_header_check and not body_text:
             continue
 
-        st.markdown(f'''
-            <div class="onboarding-card">
-                <h2>{header_text}</h2>
-                <div style="white-space: pre-wrap; font-family: 'Quicksand', sans-serif; line-height: 1.6; color: #E0E0E0;">
-{body_text}
-                </div>
-            </div>
-        ''', unsafe_allow_html=True)
+        # Rendera varje avsnitt som rent Markdown-kort så att punktlistor och formatting renderas korrekt
+        st.markdown(
+            f'<div class="onboarding-card"><h2>{header_text}</h2></div>',
+            unsafe_allow_html=True
+        )
+        
+        # Om det finns brödtext / punktlista, skriv ut den i Markdown
+        if body_text:
+            st.markdown(body_text)
