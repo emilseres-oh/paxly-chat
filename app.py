@@ -535,45 +535,46 @@ if selected_page == "Chatt":
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
-    # Dela endast upp texten vid numrerade HUVUDRUBRIKER (t.ex. "1. ", "2. ")
-    raw_sections = re.split(r'\n(?=\d+\.\s+)', DOC3_TEXT.strip())
-    
-    sections = [s.strip() for s in raw_sections if s.strip()]
+    # Dela upp hela dokumentet rad för rad
+    lines = DOC3_TEXT.strip().split('\n')
 
-    def format_lines_to_list_html(lines_text):
-        """Konverterar rader till ren <ul><li>HTML-punktlista"""
-        lines = lines_text.strip().split('\n')
-        list_items = []
+    parsed_sections = []
+    current_header = None
+    current_items = []
 
-        for line in lines:
-            clean_line = line.strip()
-            if not clean_line:
-                continue
-            # Ta bort inledande punkttecken som -, *, •, eller sifferpunkter
-            clean_line = re.sub(r'^([-\*•]|\d+[\.\)])\s*', '', clean_line)
-            list_items.append(f'<li>{clean_line}</li>')
-
-        if list_items:
-            return f'<ul>{"".join(list_items)}</ul>'
-        return ""
-
-    for section in sections:
-        lines = section.split('\n', 1)
-        header_line = lines[0].strip()
-        body_lines = lines[1].strip() if len(lines) > 1 else ""
-
-        # Om det är introduktionstext utan nummer (t.ex. "Paxly Onboarding"), hoppa över
-        if not re.match(r'^\d+\.\s+', header_line):
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
             continue
 
-        # Formatera alla efterföljande rader till en punktlista
-        list_html = format_lines_to_list_html(body_lines) if body_lines else ""
+        # Kontrollera om raden är en numrerad huvudrubrik (t.ex. "1. Aktivera...", "2. Lägg till...")
+        if re.match(r'^\d+\.\s+', stripped):
+            if current_header:
+                parsed_sections.append((current_header, current_items))
+            current_header = stripped
+            current_items = []
+        else:
+            if current_header:
+                # Tvätta bort punkttecken (- *, •, eller undermenynummer) från raden
+                clean_item = re.sub(r'^([-\*•]|\d+[\.\)])\s*', '', stripped)
+                if clean_item:
+                    current_items.append(clean_item)
 
-        # Rendera H2-rubriken OCH punktlistan tillsammans inuti samma box
+    # Spara den sista sektionen
+    if current_header:
+        parsed_sections.append((current_header, current_items))
+
+    # Rendera varje numrerad rubrik OCH dess punktlista tillsammans inuti samma box
+    for header, items in parsed_sections:
+        items_html = ""
+        if items:
+            list_elements = "".join([f"<li>{item}</li>" for item in items])
+            items_html = f"<ul>{list_elements}</ul>"
+
         card_html = f'''
             <div class="onboarding-card">
-                <h2>{header_line}</h2>
-                {list_html}
+                <h2>{header}</h2>
+                {items_html}
             </div>
         '''
         st.markdown(card_html, unsafe_allow_html=True)
