@@ -399,8 +399,11 @@ def save_question_to_gsheets(question):
             "https://www.googleapis.com/auth/drive"
         ]
         
-        # Hämta service account-konfigurationen direkt från [gcp_service_account] i st.secrets
+        # Hämta service account-konfigurationen direkt från [gcp_service_account]
         service_account_info = dict(st.secrets["gcp_service_account"])
+        
+        # Konvertera escaped \n till faktiska radbrytningar
+        service_account_info["private_key"] = service_account_info["private_key"].replace("\\n", "\n")
         
         creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
         client = gspread.authorize(creds)
