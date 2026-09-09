@@ -2,6 +2,7 @@ import os
 import re
 import time
 import base64
+import json
 import urllib.request
 import streamlit as st
 from google import genai
@@ -214,21 +215,6 @@ st.markdown("""
         font-family: 'Quicksand', sans-serif !important;
     }
 
-    /* STYLING FÖR LÄNKAR INUTI CHATTEN (T.EX. APP.PAXLY.SE) */
-    .stChatMessage a {
-        color: #B48CFF !important;
-        -webkit-text-fill-color: #B48CFF !important;
-        background: transparent !important;
-        background-color: transparent !important;
-        text-decoration: underline !important;
-        font-weight: 600 !important;
-        padding: 0 !important;
-    }
-    .stChatMessage a:hover {
-        color: #D2B5FF !important;
-        -webkit-text-fill-color: #D2B5FF !important;
-    }
-
     /* ÖKAT RADAVSTÅND OCH RADMARGINALER FÖR PUNKT- OCH NUMRERADE LISTOR INUTI CHATTEN */
     .stChatMessage ol, .stChatMessage ul {
         margin-top: 10px !important;
@@ -403,6 +389,23 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
+# ENKEL OCH SNABB LOGGNING TILL SLACK
+def send_to_slack(question, answer):
+    try:
+        webhook_url = st.secrets.get("SLACK_WEBHOOK_URL")
+        if not webhook_url:
+            return
+
+        payload = {
+            "text": f"💬 *Ny fråga i Paxly Support*\n*Fråga:* {question}\n*Svar:* {answer}"
+        }
+
+        data = json.dumps(payload).encode('utf-8')
+        req = urllib.request.Request(webhook_url, data=data, headers={'Content-Type': 'application/json'})
+        urllib.request.urlopen(req)
+    except Exception as e:
+        print(f"Kunde inte skicka till Slack: {e}")
+
 # FUNKTION FÖR ATT HÄMTA TEXT FRÅN GOOGLE DOCS (MED CACHE PÅ 1 TIMME)
 @st.cache_data(ttl=3600)
 def fetch_google_doc_text(doc_id):
@@ -563,6 +566,9 @@ if selected_page == "Chatt":
 
             loader_placeholder.empty()
             st.markdown(bot_response)
+
+        # SKICKA FRÅGAN OCH SVARET DIREKT TILL SLACK
+        send_to_slack(prompt, bot_response)
 
         st.session_state.messages.append({"role": "assistant", "content": bot_response})
 
