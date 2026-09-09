@@ -1,4 +1,5 @@
 import os
+import re
 import time
 import base64
 import urllib.request
@@ -277,10 +278,11 @@ st.markdown("""
         margin-top: 0 !important;
     }
     .onboarding-card h3 {
-        color: #FFFFFF !important;
+        color: #9C6EF9 !important;
         font-size: 20px !important;
         font-family: 'Quicksand', sans-serif !important;
         font-weight: 600 !important;
+        margin-top: 0 !important;
     }
     .onboarding-card p {
         font-size: 16px !important;
@@ -538,20 +540,30 @@ if selected_page == "Chatt":
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
-    # Rendera innehållet från Dokument 3 direkt i ett onboarding-kort
-    st.markdown(f'''
-        <div class="onboarding-card">
-            <h2>Paxly Onboarding Guide</h2>
-            <div style="white-space: pre-wrap; font-family: 'Quicksand', sans-serif; line-height: 1.6; color: #E0E0E0;">
-{DOC3_TEXT}
-            </div>
-        </div>
-    ''', unsafe_allow_html=True)
+    # Dela upp texten från DOC3_TEXT vid rubriker (# eller numrerade rubriker som "1. ", "2. ")
+    raw_sections = re.split(r'\n(?=#|\d+\.\s+)', DOC3_TEXT.strip())
+    
+    sections = [s.strip() for s in raw_sections if s.strip()]
 
-    st.markdown('''
-        <div class="onboarding-card">
-            <h3>📖 Källdokument</h3>
-            <p>Du kan även öppna och läsa originaldokumentet direkt via Google Docs:</p>
-            <p><a href="https://docs.google.com/document/d/13Vw5RUvLFzST8JL5nIXyRHUULL6mvhD4pq6Y6AdE3Mg/edit?usp=sharing" target="_blank" style="color: #9C6EF9; font-weight: bold; font-size: 18px; font-family: 'Quicksand', sans-serif;">📄 Öppna Onboarding-dokumentet (Google Doc)</a></p>
-        </div>
-    ''', unsafe_allow_html=True)
+    if not sections:
+        sections = [DOC3_TEXT.strip()]
+
+    FORBIDDEN_HEADERS = ["paxly onboarding guide", "paxly onboarding"]
+
+    for section in sections:
+        lines = section.split('\n', 1)
+        header_text = lines[0].lstrip('#').strip()
+        body_text = lines[1].strip() if len(lines) > 1 else ""
+
+        # Ignorera sektioner som bara innehåller Paxly Onboarding / Guide som titel
+        if header_text.lower() in FORBIDDEN_HEADERS:
+            continue
+
+        st.markdown(f'''
+            <div class="onboarding-card">
+                <h2>{header_text}</h2>
+                <div style="white-space: pre-wrap; font-family: 'Quicksand', sans-serif; line-height: 1.6; color: #E0E0E0;">
+{body_text}
+                </div>
+            </div>
+        ''', unsafe_allow_html=True)
