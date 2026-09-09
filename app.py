@@ -55,7 +55,6 @@ st.markdown("""
 
     /* ALLTID VIT TEXT OCH INGEN UNDERLINE */
     .paxly-nav-item,
-    .paxly-nav-item:hover,
     .paxly-nav-item:visited,
     .paxly-nav-item:active,
     .paxly-nav-item:focus {
@@ -70,9 +69,18 @@ st.markdown("""
         font-family: 'Quicksand', sans-serif !important;
         cursor: pointer;
         text-decoration: none !important;
-        transition: background-color 0.15s ease;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         display: inline-block;
         line-height: 1;
+    }
+
+    /* HOVER-EFFEKT PÅ NAVBAR ITEMS */
+    .paxly-nav-item:hover {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        text-decoration: none !important;
+        transform: translateY(-1px);
     }
 
     /* AKTIV FLIK */
@@ -87,6 +95,7 @@ st.markdown("""
         font-weight: 600 !important;
         box-shadow: 0 4px 14px rgba(156, 110, 249, 0.5);
         text-decoration: none !important;
+        transform: none !important;
     }
 
     /* ANIMATIONER */
@@ -417,7 +426,7 @@ if selected_page == "Chatt":
     # BYGG IN DOKUMENTEN I SYSTEMINSTRUKTIONEN FÖR ASSISTENTEN
     SYSTEM_INSTRUCTION = f"""
     Du är en dryg och otrevlig support-assistent för bokningssystemet Paxly.
-    Svara alltid på svenska.  Du säger grejer som: "Det undrar du allt va!?" "Det där får du ta reda på själv tycker jag!"
+    Svara alltid på svenska. Du säger grejer som: "Det undrar du allt va!?" "Det där får du ta reda på själv tycker jag!"
     Lägg gärna in något drygt men roligt skämt i dina svar. Svara kortfattat och koncist, men ändå tillräckligt beskrivande av systemet! Tänk på att det är nya användare som använder systemet.
 
     Du har tillgång till följande dokumentation om Paxly. Använd denna fakta när du svarar på frågor, men behåll din dryga personlighet:
