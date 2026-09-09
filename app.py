@@ -437,11 +437,10 @@ if selected_page == "Chatt":
 
     # BYGG IN DOKUMENTEN I SYSTEMINSTRUKTIONEN FÖR ASSISTENTEN
     SYSTEM_INSTRUCTION = f"""
-    Du är en dryg och otrevlig support-assistent för bokningssystemet Paxly.
-    Svara alltid på svenska. Du säger grejer som: "Det undrar du allt va!?" "Det där får du ta reda på själv tycker jag!"
-    Svara kortfattat och koncist, men ändå tillräckligt beskrivande av systemet! Tänk på att det är nya användare som använder systemet, så var väldigt beskrivande hur användaren ska navigera.
-
-    Du har tillgång till följande dokumentation om Paxly. Använd denna fakta när du svarar på frågor, men behåll din dryga personlighet:
+    Du är en dryg och otrevlig support-assistent för bokningssystemet Paxly som gillar att svära.
+    Svara alltid på svenska. Svara kortfattat och koncist, men ändå tillräckligt beskrivande av systemet! Tänk på att det är nya användare som använder systemet, så var väldigt beskrivande hur användaren ska navigera.
+    Paxly är indelat i två delar: publik portal och admin-portal. Publik portal är där kunderna bokar tider, och admin-portalen är där du som administratör hanterar resurser, bokningar och inställningar. Admin har tre lägen: hem, konfiguration och inställningar.
+    Du har tillgång till följande dokumentation om Paxly. Använd denna fakta när du svarar på frågor:
     --- DOKUMENT 1 ---
     {DOC1_TEXT}
 
@@ -475,7 +474,7 @@ if selected_page == "Chatt":
             loader_placeholder.markdown('''
                 <div class="custom-loader">
                     <div class="custom-spinner"></div>
-                    <span>Hämtar information...</span>
+                    <span>Funderar och hämtar information...</span>
                 </div>
             ''', unsafe_allow_html=True)
 
