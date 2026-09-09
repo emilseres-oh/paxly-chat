@@ -214,6 +214,21 @@ st.markdown("""
         font-family: 'Quicksand', sans-serif !important;
     }
 
+    /* STYLING FÖR LÄNKAR INUTI CHATTEN (T.EX. APP.PAXLY.SE) */
+    .stChatMessage a {
+        color: #B48CFF !important;
+        -webkit-text-fill-color: #B48CFF !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        text-decoration: underline !important;
+        font-weight: 600 !important;
+        padding: 0 !important;
+    }
+    .stChatMessage a:hover {
+        color: #D2B5FF !important;
+        -webkit-text-fill-color: #D2B5FF !important;
+    }
+
     /* ÖKAT RADAVSTÅND OCH RADMARGINALER FÖR PUNKT- OCH NUMRERADE LISTOR INUTI CHATTEN */
     .stChatMessage ol, .stChatMessage ul {
         margin-top: 10px !important;
