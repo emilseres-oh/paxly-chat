@@ -213,6 +213,26 @@ st.markdown("""
         font-family: 'Quicksand', sans-serif !important;
     }
 
+    /* ÖKAT RADAVSTÅND OCH RADMARGINALER FÖR PUNKT- OCH NUMRERADE LISTOR INUTI CHATTEN */
+    .stChatMessage ol, .stChatMessage ul {
+        margin-top: 10px !important;
+        margin-bottom: 16px !important;
+        padding-left: 24px !important;
+    }
+
+    .stChatMessage li {
+        margin-bottom: 12px !important;
+        line-height: 1.6 !important;
+    }
+
+    .stChatMessage li:last-child {
+        margin-bottom: 0px !important;
+    }
+
+    .stChatMessage li p {
+        margin-bottom: 6px !important;
+    }
+
     [data-testid="stChatMessageContainer"] {
         gap: 0.4rem !important;
         margin-top: 15px !important;
@@ -262,11 +282,23 @@ st.markdown("""
         font-family: 'Quicksand', sans-serif !important;
         font-weight: 600 !important;
     }
-    .onboarding-card p, .onboarding-card li {
+    .onboarding-card p {
         font-size: 16px !important;
         font-family: 'Quicksand', sans-serif !important;
         line-height: 1.6 !important;
         color: #E0E0E0 !important;
+    }
+    .onboarding-card ul, .onboarding-card ol {
+        margin-top: 8px !important;
+        margin-bottom: 12px !important;
+        padding-left: 20px !important;
+    }
+    .onboarding-card li {
+        font-size: 16px !important;
+        font-family: 'Quicksand', sans-serif !important;
+        line-height: 1.6 !important;
+        color: #E0E0E0 !important;
+        margin-bottom: 10px !important;
     }
 
     /* EXAKT FÖR TEXTAREA & CHATINPUT: SVART TEXT FÖR ANVÄNDARE, GRÅ PLACEHOLDER */
@@ -437,8 +469,9 @@ if selected_page == "Chatt":
 
     # BYGG IN DOKUMENTEN I SYSTEMINSTRUKTIONEN FÖR ASSISTENTEN
     SYSTEM_INSTRUCTION = f"""
-    Du är en dryg och otrevlig support-assistent för bokningssystemet Paxly som gillar att svära.
-    Svara alltid på svenska. Svara kortfattat och koncist, men ändå tillräckligt beskrivande av systemet! Tänk på att det är nya användare som använder systemet, så var väldigt beskrivande hur användaren ska navigera.
+    Du är en dryg och otrevlig support-assistent för bokningssystemet Paxly.
+    Svara alltid på svenska.
+    Svara kortfattat och koncist, men ändå tillräckligt beskrivande av systemet! Tänk på att det är nya användare som använder systemet.
     Paxly är indelat i två delar: publik portal och admin-portal. Publik portal är där kunderna bokar tider, och admin-portalen är där du som administratör hanterar resurser, bokningar och inställningar. Admin har tre lägen: hem, konfiguration och inställningar.
     Du har tillgång till följande dokumentation om Paxly. Använd denna fakta när du svarar på frågor:
     --- DOKUMENT 1 ---
@@ -474,7 +507,7 @@ if selected_page == "Chatt":
             loader_placeholder.markdown('''
                 <div class="custom-loader">
                     <div class="custom-spinner"></div>
-                    <span>Funderar och hämtar information...</span>
+                    <span>Hämtar information...</span>
                 </div>
             ''', unsafe_allow_html=True)
 
@@ -488,11 +521,11 @@ if selected_page == "Chatt":
             except Exception as e:
                 err_msg = str(e)
                 if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
-                    bot_response = "Tror du att jag jobbar dygnet runt gratis eller, Eva!? Dagsgränsen för gratiskvoten har nåtts! Prova igen om en stund eller imorgon."
+                    bot_response = "Tror du att jag jobbar dygnet runt gratis eller!? Dagsgränsen för gratiskvoten har nåtts! Prova igen om en stund eller imorgon."
                 elif "503" in err_msg or "UNAVAILABLE" in err_msg:
-                    bot_response = "Nu är trycket hårt på servrarna Eva! Prova att ställa din fråga igen om ett ögonblick."
+                    bot_response = "Nu är trycket hårt på servrarna! Prova att ställa din fråga igen om ett ögonblick."
                 else:
-                    bot_response = f"Det var som tusan Eva, nu spökar det i servrarna! (Fel: {e})"
+                    bot_response = f"Det var som tusan, nu spökar det i servrarna! (Fel: {e})"
 
             loader_placeholder.empty()
             st.markdown(bot_response)
@@ -503,7 +536,7 @@ if selected_page == "Chatt":
 elif selected_page == "Onboarding":
     st.markdown('''
         <div class="onboarding-card">
-            <h2>🚀 Välkommen till Paxly Onboarding</h2>
+            <h2>Välkommen till Paxly Onboarding</h2>
             <p>Här hittar du allt du behöver för att komma igång med ditt smarta bokningssystem. Följ guiden nedan för att konfigurera dina resurser och ta emot dina första bokningar.</p>
         </div>
     ''', unsafe_allow_html=True)
