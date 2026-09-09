@@ -165,7 +165,7 @@ st.markdown("""
         justify-content: center !important;
     }
 
-    /* CHATINPUT */
+    /* CHATINPUT CONTAINER */
     [data-testid="stChatInput"] {
         border: 2px solid #9C6EF9 !important;
         border-radius: 24px !important;
@@ -205,7 +205,7 @@ st.markdown("""
         100% { transform: rotate(360deg); }
     }
 
-    /* Typografi */
+    /* Typografi för chattmeddelanden */
     p, .stChatMessage p {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
@@ -269,7 +269,7 @@ st.markdown("""
         color: #E0E0E0 !important;
     }
 
-    /* EXAKT FÖR TEXTAREA & CHATINPUT */
+    /* EXAKT FÖR TEXTAREA & CHATINPUT: SVART TEXT FÖR ANVÄNDARE, GRÅ PLACEHOLDER */
     .stChatInputContainer,
     .stChatInputContainer > div,
     [data-testid="stChatInput"] > div {
@@ -282,9 +282,8 @@ st.markdown("""
         width: 100% !important;
     }
 
+    /* Texten som användaren skriver är svart */
     .stChatInputContainer textarea,
-    .stChatInputContainer p,
-    .stChatInputContainer span,
     [data-testid="stChatInput"] textarea {
         color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
@@ -302,9 +301,22 @@ st.markdown("""
         margin: 0 !important;
     }
 
-    .stChatInputContainer textarea::placeholder {
-        color: #666666 !important;
-        -webkit-text-fill-color: #666666 !important;
+    /* Inre HTML-element för platshållaren görs gråa */
+    .stChatInputContainer p,
+    .stChatInputContainer span,
+    [data-testid="stChatInput"] p,
+    [data-testid="stChatInput"] span {
+        color: #888888 !important;
+        -webkit-text-fill-color: #888888 !important;
+        font-size: 18px !important;
+        font-family: 'Quicksand', sans-serif !important;
+    }
+
+    /* Standard pseudo-element ::placeholder görs grått */
+    .stChatInputContainer textarea::placeholder,
+    [data-testid="stChatInput"] textarea::placeholder {
+        color: #888888 !important;
+        -webkit-text-fill-color: #888888 !important;
         font-size: 18px !important;
         font-family: 'Quicksand', sans-serif !important;
         line-height: 48px !important;
