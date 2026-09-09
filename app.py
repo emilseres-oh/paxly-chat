@@ -3,8 +3,11 @@ import re
 import time
 import base64
 import urllib.request
+import datetime
+import pandas as pd
 import streamlit as st
 from google import genai
+from streamlit_gsheets import GSheetsConnection
 
 st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
@@ -355,16 +358,6 @@ st.markdown("""
         font-family: 'Quicksand', sans-serif !important;
     }
 
-    /* Standard pseudo-element ::placeholder görs grått */
-    .stChatInputContainer textarea::placeholder,
-    [data-testid="stChatInput"] textarea::placeholder {
-        color: #888888 !important;
-        -webkit-text-fill-color: #888888 !important;
-        font-size: 18px !important;
-        font-family: 'Quicksand', sans-serif !important;
-        line-height: 48px !important;
-    }
-
     [data-testid="stChatInput"]:focus-within {
         border: 2px solid #9C6EF9 !important;
         box-shadow: 0 0 10px rgba(156, 110, 249, 0.5) !important;
@@ -397,6 +390,26 @@ def get_base64_image(image_path):
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
     return None
+
+# FUNKTION FÖR ATT SPARA FRÅGOR TILL GOOGLE SHEETS
+def save_question_to_gsheets(question):
+    try:
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        
+        # Hämta befintlig data
+        existing_data = conn.read(ttl=0)
+        
+        # Skapa ny rad med datum och fråga
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        new_row = pd.DataFrame([{"Datum & tid": timestamp, "Fråga": question}])
+        
+        # Slå ihop gammal och ny data
+        updated_data = pd.concat([existing_data, new_row], ignore_index=True)
+        
+        # Spara tillbaka till Google Sheets
+        conn.update(data=updated_data)
+    except Exception as e:
+        print(f"Kunde inte spara till Google Sheets: {e}")
 
 # FUNKTION FÖR ATT HÄMTA TEXT FRÅN GOOGLE DOCS (MED CACHE PÅ 1 TIMME)
 @st.cache_data(ttl=3600)
@@ -525,6 +538,9 @@ if selected_page == "Chatt":
             st.markdown(message["content"])
 
     if prompt := st.chat_input("Skriv din fråga här..."):
+        # SPARA FRÅGAN TILL GOOGLE SHEETS
+        save_question_to_gsheets(prompt)
+
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user", avatar=USER_AVATAR):
             st.markdown(prompt)
