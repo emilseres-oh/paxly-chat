@@ -19,6 +19,7 @@ from openai import OpenAI
 LOGGER = logging.getLogger(__name__)
 NETWORK_TIMEOUT_SECONDS = 10
 SLACK_TIMEOUT_SECONDS = 4
+GOOGLE_DOC_CACHE_TTL_SECONDS = 300
 
 
 def get_setting(name: str, default: Optional[str] = None) -> Optional[str]:
@@ -47,7 +48,7 @@ def get_base64_image(image_path: str) -> Optional[str]:
     return base64.b64encode(path.read_bytes()).decode("ascii")
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=GOOGLE_DOC_CACHE_TTL_SECONDS, show_spinner=False)
 def fetch_google_doc(doc_id: str, export_format: str = "txt") -> Optional[str]:
     """Hämta en publik Google Docs-export med timeout och säker felhantering."""
     url = f"https://docs.google.com/document/d/{doc_id}/export?format={export_format}"
