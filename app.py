@@ -6,6 +6,7 @@ import streamlit as st
 from openai import APIConnectionError, APIStatusError, RateLimitError
 
 from paxly_content import (
+    DEFAULT_OPENAI_MODEL,
     ONBOARDING_DOC_ID,
     SUPPORT_DOC_IDS,
     build_system_instruction,
@@ -475,7 +476,7 @@ if selected_page == "Chatt":
         st.warning("En del av supportdokumentationen kunde inte hämtas.")
 
     client = get_openai_client(api_key)
-    openai_model = get_setting("OPENAI_MODEL", "gpt-5.5")
+    openai_model = get_setting("OPENAI_MODEL", DEFAULT_OPENAI_MODEL)
     system_instruction = build_system_instruction(available_documents)
 
     human_b64 = get_base64_image(str(APP_DIR / "human.png"))
@@ -526,6 +527,7 @@ if selected_page == "Chatt":
             try:
                 response_parameters = {
                     "model": openai_model,
+                    "reasoning": {"effort": "none"},
                     "instructions": system_instruction,
                     "input": prompt,
                     "prompt_cache_key": "paxly-support-v1",
