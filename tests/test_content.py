@@ -2,9 +2,13 @@ import unittest
 
 from paxly_content import DEFAULT_OPENAI_MODEL, build_system_instruction, format_doc_to_html
 from paxly_services import sanitize_google_doc_html
+from paxly_services import GOOGLE_DOC_CACHE_TTL_SECONDS
 
 
 class ContentSafetyTests(unittest.TestCase):
+    def test_google_doc_cache_refreshes_frequently(self):
+        self.assertLessEqual(GOOGLE_DOC_CACHE_TTL_SECONDS, 300)
+
     def test_default_model_is_cost_optimized(self):
         self.assertEqual("gpt-6-luna", DEFAULT_OPENAI_MODEL)
 
