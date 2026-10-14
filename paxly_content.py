@@ -12,6 +12,7 @@ SUPPORT_DOC_IDS = (
     "13Vw5RUvLFzST8JL5nIXyRHUULL6mvhD4pq6Y6AdE3Mg",
 )
 ONBOARDING_DOC_ID = SUPPORT_DOC_IDS[2]
+DEFAULT_OPENAI_MODEL = "gpt-6-luna"
 
 
 def build_system_instruction(documents: list[str]) -> str:
