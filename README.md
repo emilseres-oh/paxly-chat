@@ -24,6 +24,7 @@ streamlit run app.py
 ```
 
 Chatten finns på `/` och onboardingen på `/onboarding`.
+Onboarding-innehållet hämtas från Google Docs och uppdateras automatiskt inom fem minuter.
 
 ## Integritet
 
