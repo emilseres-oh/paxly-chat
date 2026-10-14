@@ -488,11 +488,6 @@ if selected_page == "Chatt":
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    if st.button("Rensa chatten"):
-        st.session_state.messages = []
-        st.session_state.pop("previous_response_id", None)
-        st.rerun()
-
     for message in st.session_state.messages:
         avatar = USER_AVATAR if message["role"] == "user" else AI_AVATAR
         with st.chat_message(message["role"], avatar=avatar):
