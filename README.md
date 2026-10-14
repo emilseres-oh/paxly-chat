@@ -12,7 +12,7 @@ SLACK_WEBHOOK_URL = "https://hooks.slack.com/..." # valfri
 ```
 
 `OPENAI_MODEL` kan sättas som miljövariabel eller Streamlit-hemlighet. Standardmodellen
-är `gpt-5.5`.
+är den kostnadseffektiva `gpt-6-luna` med extra resonemang avstängt.
 
 ## Lokal körning
 
