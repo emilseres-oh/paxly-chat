@@ -6,7 +6,6 @@ import base64
 import json
 import logging
 import os
-import threading
 import urllib.request
 from pathlib import Path
 from typing import Optional
@@ -84,7 +83,7 @@ def sanitize_google_doc_html(raw_html: str) -> str:
     )
 
 
-def _post_to_slack(webhook_url: str, question: str, answer: str) -> None:
+def _post_to_slack(webhook_url: str, question: str, answer: str) -> bool:
     payload = {"text": f"💬 *Ny fråga i Paxly Support*\n*Fråga:* {question}\n*Svar:* {answer}"}
     data = json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(
@@ -94,21 +93,25 @@ def _post_to_slack(webhook_url: str, question: str, answer: str) -> None:
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=SLACK_TIMEOUT_SECONDS):
-            pass
+        with urllib.request.urlopen(request, timeout=SLACK_TIMEOUT_SECONDS) as response:
+            response_body = response.read().decode("utf-8").strip()
+            if response.getcode() == 200 and response_body == "ok":
+                return True
+            LOGGER.error(
+                "Slack-webhook svarade oväntat med status %s och body %r",
+                response.getcode(),
+                response_body,
+            )
     except Exception:
         LOGGER.exception("Kunde inte skicka supportlogg till Slack")
+    return False
 
 
-def send_to_slack(question: str, answer: str) -> None:
-    """Skicka loggen utanför den kritiska svarsvägen."""
+def send_to_slack(question: str, answer: str) -> bool:
+    """Skicka frågan och svaret till Slack innan Streamlit kör om sidan."""
     webhook_url = get_setting("SLACK_WEBHOOK_URL")
     if not webhook_url:
-        return
+        LOGGER.warning("SLACK_WEBHOOK_URL saknas; supportloggen skickades inte")
+        return False
 
-    threading.Thread(
-        target=_post_to_slack,
-        args=(webhook_url, question, answer),
-        daemon=True,
-        name="paxly-slack-log",
-    ).start()
+    return _post_to_slack(webhook_url, question, answer)
