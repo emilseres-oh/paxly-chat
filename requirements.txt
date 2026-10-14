@@ -1,2 +1,3 @@
-google-genai
-streamlit
+bleach>=6.2,<7
+openai>=1.66,<3
+streamlit>=1.36,<2
