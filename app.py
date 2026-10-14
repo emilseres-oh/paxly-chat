@@ -488,19 +488,10 @@ if selected_page == "Chatt":
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    controls = st.columns([1, 2])
-    with controls[0]:
-        if st.button("Rensa chatten", use_container_width=True):
-            st.session_state.messages = []
-            st.session_state.pop("previous_response_id", None)
-            st.rerun()
-    with controls[1]:
-        slack_consent = st.checkbox(
-            "Tillåt att frågor och svar skickas till supportteamets Slack",
-            value=False,
-            help="Valet gäller bara den här webbläsarsessionen och kan ändras när som helst.",
-        )
-    st.caption("Slack-loggning är frivillig. Undvik att skriva personuppgifter eller känslig information.")
+    if st.button("Rensa chatten"):
+        st.session_state.messages = []
+        st.session_state.pop("previous_response_id", None)
+        st.rerun()
 
     for message in st.session_state.messages:
         avatar = USER_AVATAR if message["role"] == "user" else AI_AVATAR
@@ -558,7 +549,7 @@ if selected_page == "Chatt":
             loader_placeholder.empty()
             st.markdown(bot_response)
 
-        if slack_consent and response_succeeded:
+        if response_succeeded:
             send_to_slack(prompt, bot_response)
 
         st.session_state.messages.append({"role": "assistant", "content": bot_response})
