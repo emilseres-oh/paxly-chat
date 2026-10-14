@@ -1,10 +1,13 @@
 import unittest
 
-from paxly_content import build_system_instruction, format_doc_to_html
+from paxly_content import DEFAULT_OPENAI_MODEL, build_system_instruction, format_doc_to_html
 from paxly_services import sanitize_google_doc_html
 
 
 class ContentSafetyTests(unittest.TestCase):
+    def test_default_model_is_cost_optimized(self):
+        self.assertEqual("gpt-6-luna", DEFAULT_OPENAI_MODEL)
+
     def test_plain_text_is_html_escaped(self):
         rendered = format_doc_to_html("# Rubrik\n1. <script>alert(1)</script>")
 
