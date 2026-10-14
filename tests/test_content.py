@@ -1,8 +1,8 @@
 import unittest
+from unittest.mock import MagicMock, patch
 
 from paxly_content import DEFAULT_OPENAI_MODEL, build_system_instruction, format_doc_to_html
-from paxly_services import sanitize_google_doc_html
-from paxly_services import GOOGLE_DOC_CACHE_TTL_SECONDS
+from paxly_services import GOOGLE_DOC_CACHE_TTL_SECONDS, sanitize_google_doc_html, send_to_slack
 
 
 class ContentSafetyTests(unittest.TestCase):
@@ -34,6 +34,21 @@ class ContentSafetyTests(unittest.TestCase):
         self.assertIn("DOKUMENT 1", instruction)
         self.assertIn("DOKUMENT 2", instruction)
         self.assertIn("Första", instruction)
+
+    @patch("paxly_services.get_setting", return_value=None)
+    def test_slack_send_fails_when_webhook_is_missing(self, _get_setting):
+        self.assertFalse(send_to_slack("Fråga", "Svar"))
+
+    @patch("paxly_services.urllib.request.urlopen")
+    @patch("paxly_services.get_setting", return_value="https://hooks.slack.test/example")
+    def test_slack_send_waits_for_successful_delivery(self, _get_setting, urlopen):
+        response = MagicMock()
+        response.getcode.return_value = 200
+        response.read.return_value = b"ok"
+        urlopen.return_value.__enter__.return_value = response
+
+        self.assertTrue(send_to_slack("Fråga", "Svar"))
+        urlopen.assert_called_once()
 
 
 if __name__ == "__main__":
