@@ -468,9 +468,9 @@ st.markdown("""
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 """, unsafe_allow_html=True)
 
-# Läs URL-parametrar för navigeringen
-query_params = st.query_params
-selected_page = query_params.get("page", "Chatt")
+# Streamlits multipage-routing kör den här filen även för onboarding-sidan.
+# Sidan sätter markören innan appen laddas; huvud-URL:en visar alltid chatten.
+selected_page = st.session_state.pop("_paxly_page", "Chatt")
 
 # Renders ren HTML/CSS Navbar
 chatt_class = "paxly-nav-item paxly-nav-active" if selected_page == "Chatt" else "paxly-nav-item"
@@ -478,8 +478,8 @@ onboarding_class = "paxly-nav-item paxly-nav-active" if selected_page == "Onboar
 
 st.markdown(f'''
     <div class="paxly-navbar-container">
-        <a href="?page=Chatt" target="_self" class="{chatt_class}">Chatt</a>
-        <a href="?page=Onboarding" target="_self" class="{onboarding_class}">Onboarding</a>
+        <a href="./" target="_self" class="{chatt_class}">Chatt</a>
+        <a href="./onboarding" target="_self" class="{onboarding_class}">Onboarding</a>
     </div>
 ''', unsafe_allow_html=True)
 
