@@ -28,8 +28,8 @@ Onboarding-innehållet hämtas från Google Docs och uppdateras automatiskt inom
 
 ## Integritet
 
-Frågor och svar skickas endast till Slack när användaren aktivt godkänner det för den
-aktuella webbläsarsessionen. API-nycklar får aldrig checkas in i Git.
+Lyckade frågor och svar skickas automatiskt till supportteamets Slack. API-nycklar får
+aldrig checkas in i Git.
 
 ## Tester
 
