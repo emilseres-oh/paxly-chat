@@ -5,7 +5,7 @@ import base64
 import json
 import urllib.request
 import streamlit as st
-from google import genai
+from openai import OpenAI
 
 st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
@@ -493,13 +493,14 @@ if os.path.exists("logo.png"):
 
 # --- SIDA 1: CHATT ---
 if selected_page == "Chatt":
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
 
     if not api_key:
-        st.error("API-nyckel saknas. Lägg till GEMINI_API_KEY i dina Streamlit Secrets.")
+        st.error("API-nyckel saknas. Lägg till OPENAI_API_KEY i dina Streamlit Secrets.")
         st.stop()
 
-    client = genai.Client(api_key=api_key)
+    client = OpenAI(api_key=api_key)
+    openai_model = os.environ.get("OPENAI_MODEL", "gpt-5.5")
 
     # BYGG IN DOKUMENTEN I SYSTEMINSTRUKTIONEN FÖR ASSISTENTEN
     SYSTEM_INSTRUCTION = f"""
@@ -549,16 +550,16 @@ if selected_page == "Chatt":
             ''', unsafe_allow_html=True)
 
             try:
-                response = client.models.generate_content(
-                    model="gemini-3.6-flash",
-                    contents=prompt,
-                    config={"system_instruction": SYSTEM_INSTRUCTION}
+                response = client.responses.create(
+                    model=openai_model,
+                    instructions=SYSTEM_INSTRUCTION,
+                    input=st.session_state.messages,
                 )
-                bot_response = response.text
+                bot_response = response.output_text
             except Exception as e:
                 err_msg = str(e)
-                if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
-                    bot_response = "Tror du att jag jobbar dygnet runt gratis eller!? Dagsgränsen för gratiskvoten har nåtts! Prova igen om en stund eller imorgon."
+                if "429" in err_msg or "rate_limit" in err_msg.lower():
+                    bot_response = "Tror du att jag jobbar dygnet runt eller!? API-gränsen har nåtts. Prova igen om en stund."
                 elif "503" in err_msg or "UNAVAILABLE" in err_msg:
                     bot_response = "Nu är trycket hårt på servrarna! Prova att ställa din fråga igen om ett ögonblick."
                 else:
