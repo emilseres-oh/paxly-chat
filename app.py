@@ -1,11 +1,29 @@
-import os
 import re
-import time
-import base64
-import json
-import urllib.request
+import logging
+from pathlib import Path
+
 import streamlit as st
-from openai import OpenAI
+from openai import APIConnectionError, APIStatusError, RateLimitError
+
+from paxly_content import (
+    ONBOARDING_DOC_ID,
+    SUPPORT_DOC_IDS,
+    build_system_instruction,
+    format_doc_to_html,
+)
+from paxly_services import (
+    fetch_google_doc,
+    get_base64_image,
+    get_openai_client,
+    get_setting,
+    sanitize_google_doc_html,
+    send_to_slack,
+)
+
+
+APP_DIR = Path(__file__).resolve().parent
+LOGGER = logging.getLogger(__name__)
+MAX_DISPLAY_MESSAGES = 50
 
 st.set_page_config(page_title="Paxly Support", page_icon="💬", layout="centered")
 
@@ -383,58 +401,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-def get_base64_image(image_path):
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    return None
+# Streamlits multipage-routing kör den här filen även för onboarding-sidan.
+selected_page = st.session_state.pop("_paxly_page", "Chatt")
 
-# ENKEL OCH SNABB LOGGNING TILL SLACK
-def send_to_slack(question, answer):
-    try:
-        webhook_url = st.secrets.get("SLACK_WEBHOOK_URL")
-        if not webhook_url:
-            return
-
-        payload = {
-            "text": f"💬 *Ny fråga i Paxly Support*\n*Fråga:* {question}\n*Svar:* {answer}"
-        }
-
-        data = json.dumps(payload).encode('utf-8')
-        req = urllib.request.Request(webhook_url, data=data, headers={'Content-Type': 'application/json'})
-        urllib.request.urlopen(req)
-    except Exception as e:
-        print(f"Kunde inte skicka till Slack: {e}")
-
-# FUNKTION FÖR ATT HÄMTA TEXT FRÅN GOOGLE DOCS (MED CACHE PÅ 1 TIMME)
-@st.cache_data(ttl=3600)
-def fetch_google_doc_text(doc_id):
-    try:
-        url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt"
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            return response.read().decode('utf-8')
-    except Exception as e:
-        return f"Kunde inte hämta dokumentet ({doc_id}): {e}"
-
-# FUNKTION FÖR ATT HÄMTA DOC3 MED BILDER (HTML)
-@st.cache_data(ttl=3600)
-def fetch_google_doc_html(doc_id):
-    try:
-        url = f"https://docs.google.com/document/d/{doc_id}/export?format=html"
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            return response.read().decode('utf-8')
-    except Exception as e:
-        return f"Kunde inte hämta dokumentet ({doc_id}): {e}"
-
-# HÄMTA DOKUMENTEN
-DOC1_TEXT = fetch_google_doc_text("1qCOWysw_B6KDsCT7jPh4Aa9R_1CD5WFk53A4vgTb0JI")
-DOC2_TEXT = fetch_google_doc_text("15Mg6bJGO9viBxYF6fnBM5hehf9spUXpjbVevoWBEldk")
-DOC3_TEXT = fetch_google_doc_text("13Vw5RUvLFzST8JL5nIXyRHUULL6mvhD4pq6Y6AdE3Mg")
-DOC3_HTML = fetch_google_doc_html("13Vw5RUvLFzST8JL5nIXyRHUULL6mvhD4pq6Y6AdE3Mg")
-
-bg_base64 = get_base64_image("bg.jpg")
+bg_base64 = get_base64_image(str(APP_DIR / "bg.jpg"))
 
 if bg_base64:
     bg_css = f"""
@@ -468,10 +438,6 @@ st.markdown("""
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 """, unsafe_allow_html=True)
 
-# Streamlits multipage-routing kör den här filen även för onboarding-sidan.
-# Sidan sätter markören innan appen laddas; huvud-URL:en visar alltid chatten.
-selected_page = st.session_state.pop("_paxly_page", "Chatt")
-
 # Renders ren HTML/CSS Navbar
 chatt_class = "paxly-nav-item paxly-nav-active" if selected_page == "Chatt" else "paxly-nav-item"
 onboarding_class = "paxly-nav-item paxly-nav-active" if selected_page == "Onboarding" else "paxly-nav-item"
@@ -484,49 +450,56 @@ st.markdown(f'''
 ''', unsafe_allow_html=True)
 
 # 2. LOGOTYPEN UNDER NAVBAR
-if os.path.exists("logo.png"):
+logo_base64 = get_base64_image(str(APP_DIR / "logo.png"))
+if logo_base64:
     st.markdown('''
         <div class="logo-container">
             <img src="data:image/png;base64,{}" alt="Paxly Logo">
         </div>
-    '''.format(get_base64_image("logo.png")), unsafe_allow_html=True)
+    '''.format(logo_base64), unsafe_allow_html=True)
 
 # --- SIDA 1: CHATT ---
 if selected_page == "Chatt":
-    api_key = os.environ.get("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
+    api_key = get_setting("OPENAI_API_KEY")
 
     if not api_key:
         st.error("API-nyckel saknas. Lägg till OPENAI_API_KEY i dina Streamlit Secrets.")
         st.stop()
 
-    client = OpenAI(api_key=api_key)
-    openai_model = os.environ.get("OPENAI_MODEL", "gpt-5.5")
+    documents = [fetch_google_doc(doc_id) for doc_id in SUPPORT_DOC_IDS]
+    available_documents = [document for document in documents if document]
+    if not available_documents:
+        st.error("Supportdokumentationen går inte att nå just nu. Försök igen om en stund.")
+        st.stop()
+    if len(available_documents) != len(SUPPORT_DOC_IDS):
+        st.warning("En del av supportdokumentationen kunde inte hämtas.")
 
-    # BYGG IN DOKUMENTEN I SYSTEMINSTRUKTIONEN FÖR ASSISTENTEN
-    SYSTEM_INSTRUCTION = f"""
-    Du är en dryg och otrevlig support-assistent för bokningssystemet Paxly.
-    Svara alltid på svenska.
-    Svara kortfattat och koncist, men ändå tillräckligt beskrivande av systemet! Tänk på att det är nya användare som använder systemet.
-    Paxly är indelat i två delar: publik portal och admin-portal. Publik portal är där kunderna bokar tider, och admin-portalen är där du som administratör hanterar resurser, bokningar och inställningar. Admin har tre lägen: hem, konfiguration och inställningar.
-    Du har tillgång till följande dokumentation om Paxly. Använd denna fakta när du svarar på frågor:
-    --- DOKUMENT 1 ---
-    {DOC1_TEXT}
+    client = get_openai_client(api_key)
+    openai_model = get_setting("OPENAI_MODEL", "gpt-5.5")
+    system_instruction = build_system_instruction(available_documents)
 
-    --- DOKUMENT 2 ---
-    {DOC2_TEXT}
-
-    --- DOKUMENT 3 ---
-    {DOC3_TEXT}
-    """
-
-    human_b64 = get_base64_image("human.png")
-    ai_b64 = get_base64_image("ai.png")
+    human_b64 = get_base64_image(str(APP_DIR / "human.png"))
+    ai_b64 = get_base64_image(str(APP_DIR / "ai.png"))
 
     USER_AVATAR = f"data:image/png;base64,{human_b64}" if human_b64 else "👤"
     AI_AVATAR = f"data:image/png;base64,{ai_b64}" if ai_b64 else "🤖"
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
+
+    controls = st.columns([1, 2])
+    with controls[0]:
+        if st.button("Rensa chatten", use_container_width=True):
+            st.session_state.messages = []
+            st.session_state.pop("previous_response_id", None)
+            st.rerun()
+    with controls[1]:
+        slack_consent = st.checkbox(
+            "Tillåt att frågor och svar skickas till supportteamets Slack",
+            value=False,
+            help="Valet gäller bara den här webbläsarsessionen och kan ändras när som helst.",
+        )
+    st.caption("Slack-loggning är frivillig. Undvik att skriva personuppgifter eller känslig information.")
 
     for message in st.session_state.messages:
         avatar = USER_AVATAR if message["role"] == "user" else AI_AVATAR
@@ -538,7 +511,8 @@ if selected_page == "Chatt":
         with st.chat_message("user", avatar=USER_AVATAR):
             st.markdown(prompt)
 
-        bot_response = None
+        bot_response = "Något gick fel. Försök igen om en stund."
+        response_succeeded = False
 
         with st.chat_message("assistant", avatar=AI_AVATAR):
             loader_placeholder = st.empty()
@@ -550,87 +524,68 @@ if selected_page == "Chatt":
             ''', unsafe_allow_html=True)
 
             try:
+                response_parameters = {
+                    "model": openai_model,
+                    "instructions": system_instruction,
+                    "input": prompt,
+                    "prompt_cache_key": "paxly-support-v1",
+                    "context_management": [
+                        {"type": "compaction", "compact_threshold": 100_000}
+                    ],
+                }
+                if previous_response_id := st.session_state.get("previous_response_id"):
+                    response_parameters["previous_response_id"] = previous_response_id
+
                 response = client.responses.create(
-                    model=openai_model,
-                    instructions=SYSTEM_INSTRUCTION,
-                    input=st.session_state.messages,
+                    **response_parameters,
                 )
                 bot_response = response.output_text
-            except Exception as e:
-                err_msg = str(e)
-                if "429" in err_msg or "rate_limit" in err_msg.lower():
-                    bot_response = "Tror du att jag jobbar dygnet runt eller!? API-gränsen har nåtts. Prova igen om en stund."
-                elif "503" in err_msg or "UNAVAILABLE" in err_msg:
-                    bot_response = "Nu är trycket hårt på servrarna! Prova att ställa din fråga igen om ett ögonblick."
-                else:
-                    bot_response = f"Det var som tusan, nu spökar det i servrarna! (Fel: {e})"
+                st.session_state.previous_response_id = response.id
+                response_succeeded = True
+            except RateLimitError:
+                LOGGER.warning("OpenAI API-gränsen har nåtts", exc_info=True)
+                bot_response = "API-gränsen har nåtts. Försök igen om en stund."
+            except APIConnectionError:
+                LOGGER.warning("Kunde inte ansluta till OpenAI", exc_info=True)
+                bot_response = "Supporttjänsten går inte att nå just nu. Försök igen om en stund."
+            except APIStatusError as error:
+                LOGGER.error("OpenAI svarade med status %s", error.status_code, exc_info=True)
+            except Exception:
+                LOGGER.exception("Oväntat fel vid OpenAI-anrop")
 
             loader_placeholder.empty()
             st.markdown(bot_response)
 
-        # SKICKA FRÅGAN OCH SVARET DIREKT TILL SLACK
-        send_to_slack(prompt, bot_response)
+        if slack_consent and response_succeeded:
+            send_to_slack(prompt, bot_response)
 
         st.session_state.messages.append({"role": "assistant", "content": bot_response})
+        st.session_state.messages = st.session_state.messages[-MAX_DISPLAY_MESSAGES:]
 
 # --- SIDA 2: ONBOARDING ---
 elif selected_page == "Onboarding":
-    def format_doc_to_pretty_html(text):
-        """Konverterar råtext från Google Docs till strukturerad HTML utan titeln 'Paxly Onboarding'"""
-        lines = [line.strip() for line in text.strip().split('\n') if line.strip()]
-        html_output = []
-        in_ol = False
+    onboarding_html = fetch_google_doc(ONBOARDING_DOC_ID, "html")
+    onboarding_text = None
 
-        for i, line in enumerate(lines):
-            # Filtrera bort "Paxly Onboarding" helt
-            if "paxly onboarding" in line.lower():
-                continue
-
-            # Kontrollera om raden är en numrerad punkt (t.ex. 1. Aktivera...)
-            if re.match(r'^\d+\.\s+', line):
-                if not in_ol:
-                    html_output.append('<ol>')
-                    in_ol = True
-                clean_item = re.sub(r'^\d+\.\s+', '', line)
-                html_output.append(f'<li>{clean_item}</li>')
-            else:
-                if in_ol:
-                    html_output.append('</ol>')
-                    in_ol = False
-
-                # Om nästa rad är en numrerad punkt (1.) behandlas denna rad automatiskt som en rubrik (<h2>)
-                next_is_num = (i + 1 < len(lines)) and bool(re.match(r'^\d+\.\s+', lines[i + 1]))
-                
-                if next_is_num or line.startswith("#"):
-                    clean_header = line.lstrip("#").strip()
-                    html_output.append(f'<h2>{clean_header}</h2>')
-                else:
-                    html_output.append(f'<p>{line}</p>')
-
-        if in_ol:
-            html_output.append('</ol>')
-
-        return "".join(html_output)
-
-    # Om dokumentet innehåller inbäddade bilder (HTML)
-    if "<img" in DOC3_HTML:
-        # Rensa bort Googles tunga <style> och <head>
-        body_match = re.search(r'<body[^>]*>(.*?)</body>', DOC3_HTML, re.DOTALL)
-        clean_html = body_match.group(1) if body_match else DOC3_HTML
-        
-        # Ta bort "Paxly Onboarding" rubrik om den finns i HTML
-        clean_html = re.sub(r'<p[^>]*>.*?Paxly Onboarding.*?</p>', '', clean_html, flags=re.IGNORECASE)
-        
-        st.markdown(f'''
-            <div class="onboarding-card">
-                {clean_html}
-            </div>
-        ''', unsafe_allow_html=True)
+    if onboarding_html:
+        body_match = re.search(r"<body[^>]*>(.*?)</body>", onboarding_html, re.DOTALL | re.IGNORECASE)
+        body_html = body_match.group(1) if body_match else onboarding_html
+        body_html = re.sub(
+            r"<p[^>]*>.*?Paxly Onboarding.*?</p>",
+            "",
+            body_html,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        onboarding_content = sanitize_google_doc_html(body_html)
     else:
-        pretty_content = format_doc_to_pretty_html(DOC3_TEXT)
+        onboarding_text = fetch_google_doc(ONBOARDING_DOC_ID)
+        onboarding_content = format_doc_to_html(onboarding_text) if onboarding_text else ""
 
-        st.markdown(f'''
-            <div class="onboarding-card">
-                {pretty_content}
-            </div>
-        ''', unsafe_allow_html=True)
+    if not onboarding_content:
+        st.error("Onboarding-innehållet går inte att nå just nu. Försök igen om en stund.")
+        st.stop()
+
+    st.markdown(
+        f'<div class="onboarding-card">{onboarding_content}</div>',
+        unsafe_allow_html=True,
+    )
